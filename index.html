@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0068a3">
   <title>PHB - Breakfast Reconciliation & Audit System</title>
   
   <!-- FAVICON INTEGRATION -->
@@ -50,13 +53,25 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ebeff3; }
+    
+    body { 
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background-color: #ebeff3; 
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+      -webkit-tap-highlight-color: transparent;
+    }
     .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     
-    ::-webkit-scrollbar { height: 8px; width: 8px; }
+    /* Mencegah iOS Safari auto-zoom saat fokus pada input */
+    @media screen and (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    ::-webkit-scrollbar { height: 6px; width: 6px; }
     ::-webkit-scrollbar-track { background: #e2e8f0; }
     ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
     @media print {
       .no-print { display: none !important; }
@@ -68,168 +83,164 @@
     }
   </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+<body class="text-slate-800 min-h-screen flex flex-col antialiased pb-24 lg:pb-8 selection:bg-brand-500 selection:text-white">
 
-  <!-- TOP HEADER / BRANDING -->
-  <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print">
-    <div class="max-w-[1850px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center space-x-3.5">
-        <!-- Logo Card -->
-        <div class="bg-white/95 px-3 py-1.5 rounded-xl shadow-md flex items-center border border-white/60">
-          <img src="logo.png" alt="Platinum Hotel & Convention Balikpapan" class="h-9 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ac9e7e] to-[#c5a880] flex items-center justify-center text-white font-extrabold text-sm shadow\'>P</div><div class=\'leading-tight ml-2\'><span class=\'block text-xs font-black tracking-wider text-slate-800\'>PLATINUM</span><span class=\'block text-[8px] font-bold tracking-widest text-[#ac9e7e] uppercase\'>Hotel & Convention</span></div>';">
+  <!-- TOP HEADER / BRANDING (RESPONSIVE FOR NOTCH & SAFE-AREA) -->
+  <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print pt-[env(safe-area-inset-top,0px)]">
+    <div class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-2.5 sm:space-x-3.5">
+        <div class="bg-white/95 px-2 sm:px-3 py-1 rounded-xl shadow-md flex items-center border border-white/60 shrink-0">
+          <img src="logo.png" alt="Platinum Hotel" class="h-7 sm:h-9 w-auto object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-[#ac9e7e] to-[#c5a880] flex items-center justify-center text-white font-extrabold text-xs sm:text-sm shadow\'>P</div><div class=\'leading-tight ml-1.5 hidden sm:block\'><span class=\'block text-[11px] font-black tracking-wider text-slate-800\'>PLATINUM</span><span class=\'block text-[7px] font-bold tracking-widest text-[#ac9e7e] uppercase\'>Hotel</span></div>';">
         </div>
 
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-base sm:text-lg font-extrabold text-white tracking-wide">Breakfast Reconciliation &amp; Audit</h1>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 backdrop-blur-sm uppercase">FBM System</span>
-            <span id="syncStatus" class="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-500/30 text-emerald-100 border border-emerald-400/40 hidden">
-              <i class="fa-solid fa-cloud-arrow-up mr-1"></i>Cloud Synced
+        <div class="min-w-0">
+          <div class="flex items-center space-x-1.5">
+            <h1 class="text-xs sm:text-base font-extrabold text-white tracking-wide truncate">Breakfast Reconciliation</h1>
+            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-white/20 text-white border border-white/30 uppercase">FBM</span>
+            <span id="syncStatus" class="px-1.5 py-0.5 rounded-full text-[8.5px] font-bold bg-emerald-500/40 text-emerald-100 border border-emerald-400/50 hidden">
+              <i class="fa-solid fa-cloud mr-0.5"></i>Synced
             </span>
           </div>
-          <p class="text-[11.5px] text-blue-100/90 font-medium">Daily PMS &amp; DRR Reconciliation, Actual Physical Count, Loss Prevention &amp; Cost Control</p>
+          <p class="text-[10px] sm:text-[11.5px] text-blue-100/90 font-medium truncate hidden xs:block">Daily Audit, Actual Count, Loss Prevention &amp; Cost Control</p>
         </div>
       </div>
 
-      <!-- Quick Action Controls -->
-      <div class="flex items-center space-x-2.5">
-        <!-- Panduan Kolom Button for Staff -->
-        <button onclick="openGuideModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs flex items-center space-x-1.5 shadow-md active:scale-95 transition">
-          <i class="fa-solid fa-circle-question text-sm"></i>
-          <span>Panduan Kolom</span>
+      <!-- Quick Action Controls (Desktop & Mobile Header) -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+        <button onclick="openGuideModal()" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[11px] sm:text-xs flex items-center space-x-1 shadow-sm active:scale-95 transition">
+          <i class="fa-solid fa-circle-question text-xs sm:text-sm"></i>
+          <span class="hidden md:inline">Panduan Kolom</span>
+          <span class="md:hidden">Panduan</span>
         </button>
-        <!-- Post Breakfast Entry Button -->
-        <button id="btnOpenInputModal" onclick="openInputModal()" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-brand-700 font-extrabold text-xs flex items-center space-x-2 shadow-md hover:shadow-lg active:scale-95 transition-all border border-white/80">
+        <button id="btnOpenInputModal" onclick="openInputModal()" class="hidden md:flex px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-brand-700 font-extrabold text-xs items-center space-x-1.5 shadow-md active:scale-95 transition border border-white/80">
           <i class="fa-solid fa-plus-circle text-brand-600 text-sm"></i>
           <span>+ Post-Breakfast Entry</span>
         </button>
-        <button onclick="exportCSV()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold flex items-center space-x-1.5 border border-white/30 backdrop-blur-sm transition">
+        <button onclick="exportCSV()" class="hidden sm:flex px-3 py-1.5 sm:py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold items-center space-x-1 border border-white/30 transition">
           <i class="fa-solid fa-file-excel text-emerald-300"></i>
-          <span class="hidden sm:inline">Export CSV</span>
-        </button>
-        <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold flex items-center space-x-1.5 border border-white/30 backdrop-blur-sm transition">
-          <i class="fa-solid fa-print text-sky-200"></i>
-          <span class="hidden sm:inline">Print Report</span>
+          <span class="hidden lg:inline">Export</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- CONTROL PANEL & TABS & EDITABLE RATE PARAMETERS -->
+  <!-- CONTROL PANEL & TABS & RATE SETTINGS -->
   <div class="bg-white border-b border-slate-200/90 shadow-sm no-print">
-    <div class="max-w-[1850px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5">
       
       <!-- Period Selector -->
-      <div class="flex items-center space-x-2.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200">
-        <div class="flex items-center space-x-1.5 px-2 text-xs font-bold text-slate-600">
+      <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs w-full sm:w-auto justify-between sm:justify-start">
+        <div class="flex items-center space-x-1 px-1.5 text-xs font-bold text-slate-600">
           <i class="fa-regular fa-calendar-days text-brand-600"></i>
-          <span>Period:</span>
+          <span>Bulan:</span>
         </div>
-        <select id="selMonth" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
-          <option value="1">January</option>
-          <option value="2">February</option>
-          <option value="3">March</option>
-          <option value="4">April</option>
-          <option value="5">May</option>
-          <option value="6">June</option>
-          <option value="7">July</option>
-          <option value="8">August</option>
-          <option value="9">September</option>
-          <option value="10">October</option>
-          <option value="11" selected>November</option>
-          <option value="12">December</option>
-        </select>
-        <select id="selYear" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
-          <option value="2025">2025</option>
-          <option value="2026" selected>2026</option>
-          <option value="2027">2027</option>
-          <option value="2028">2028</option>
-        </select>
-        <span id="periodBadge" class="text-xs font-extrabold text-brand-700 px-3 py-1 rounded-lg bg-brand-50 border border-brand-200 shadow-sm">November 2026</span>
+        <div class="flex items-center space-x-1">
+          <select id="selMonth" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm">
+            <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+            <option value="4">Apr</option><option value="5">Mei</option><option value="6">Jun</option>
+            <option value="7">Jul</option><option value="8">Agu</option><option value="9">Sep</option>
+            <option value="10">Okt</option><option value="11" selected>Nov</option><option value="12">Des</option>
+          </select>
+          <select id="selYear" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm">
+            <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+          </select>
+        </div>
+        <span id="periodBadge" class="text-[11px] font-black text-brand-700 px-2.5 py-1 rounded-lg bg-brand-50 border border-brand-200 shrink-0">Nov 2026</span>
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
-        <button onclick="switchTab('daily')" id="tabBtn-daily" class="px-4 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm">
-          <i class="fa-solid fa-table-list mr-1.5"></i>Daily Reconciliation
+      <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold w-full sm:w-auto">
+        <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm text-center">
+          <i class="fa-solid fa-table-list mr-1"></i>Harian
         </button>
-        <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition">
-          <i class="fa-solid fa-chart-pie mr-1.5"></i>Executive Summary &amp; Audit
+        <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition text-center">
+          <i class="fa-solid fa-chart-pie mr-1"></i>Ringkasan Audit
         </button>
       </div>
 
       <!-- EDITABLE RATES PARAMETER BAR -->
-      <div class="flex flex-wrap items-center space-x-2 text-xs bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200">
-        <span class="text-slate-500 font-bold text-[11px] mr-1"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rate Settings:</span>
-        
-        <div class="flex items-center space-x-1">
-          <label class="text-[11px] text-slate-600 font-medium">Extra Adult:</label>
-          <input type="number" id="cfgRateAdult" value="150000" step="1000" oninput="updateRateSettings()" class="w-24 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
-        </div>
-        
-        <span class="text-slate-300">•</span>
-        
-        <div class="flex items-center space-x-1">
-          <label class="text-[11px] text-slate-600 font-medium">Extra Kids:</label>
-          <input type="number" id="cfgRateKids" value="80000" step="1000" oninput="updateRateSettings()" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
-        </div>
-        
-        <span class="text-slate-300">•</span>
+      <div class="w-full xl:w-auto overflow-x-auto pb-1 sm:pb-0">
+        <div class="flex items-center space-x-2 text-xs bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 whitespace-nowrap min-w-max">
+          <span class="text-slate-500 font-bold text-[10.5px]"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rates:</span>
+          
+          <div class="flex items-center space-x-1">
+            <label class="text-[10px] sm:text-[11px] text-slate-600 font-medium">Extra Adult:</label>
+            <input type="number" id="cfgRateAdult" value="150000" step="1000" oninput="updateRateSettings()" class="w-20 sm:w-24 bg-white border border-slate-300 rounded-lg px-1.5 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 text-xs shadow-inner">
+          </div>
+          
+          <span class="text-slate-300">•</span>
+          
+          <div class="flex items-center space-x-1">
+            <label class="text-[10px] sm:text-[11px] text-slate-600 font-medium">Extra Kids:</label>
+            <input type="number" id="cfgRateKids" value="80000" step="1000" oninput="updateRateSettings()" class="w-16 sm:w-20 bg-white border border-slate-300 rounded-lg px-1.5 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 text-xs shadow-inner">
+          </div>
+          
+          <span class="text-slate-300">•</span>
 
-        <!-- Default Breakfast Allocation Input -->
-        <div class="flex items-center space-x-1 bg-amber-50/80 px-2.5 py-0.5 rounded-lg border border-amber-200">
-          <label class="text-[11px] text-amber-900 font-bold" title="Default Room Rate Breakfast Allocation (Rp)">Breakfast Allocation:</label>
-          <input type="number" id="cfgRateAlloc" value="100000" step="1000" oninput="updateRateSettings()" class="w-24 bg-white border border-amber-300 rounded-md px-2 py-0.5 text-amber-900 font-black font-mono text-right focus:outline-none focus:border-amber-600 shadow-inner">
-        </div>
+          <div class="flex items-center space-x-1 bg-amber-50/80 px-2 py-0.5 rounded-lg border border-amber-200">
+            <label class="text-[10px] sm:text-[11px] text-amber-900 font-bold">Breakfast Allocation:</label>
+            <input type="number" id="cfgRateAlloc" value="100000" step="1000" oninput="updateRateSettings()" class="w-20 sm:w-24 bg-white border border-amber-300 rounded-md px-1.5 py-0.5 text-amber-900 font-black font-mono text-right focus:outline-none focus:border-amber-600 text-xs shadow-inner">
+          </div>
 
-        <span class="text-slate-300">•</span>
-        
-        <div class="flex items-center space-x-1">
-          <label class="text-[11px] text-slate-600 font-medium">Std Food Cost:</label>
-          <input type="number" id="cfgRateCost" value="42000" step="500" oninput="updateRateSettings()" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-brand-700 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
+          <span class="text-slate-300">•</span>
+          
+          <div class="flex items-center space-x-1">
+            <label class="text-[10px] sm:text-[11px] text-slate-600 font-medium">Cost:</label>
+            <input type="number" id="cfgRateCost" value="42000" step="500" oninput="updateRateSettings()" class="w-16 sm:w-20 bg-white border border-slate-300 rounded-lg px-1.5 py-0.5 text-brand-700 font-bold font-mono text-right focus:outline-none focus:border-brand-600 text-xs shadow-inner">
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-[1850px] mx-auto px-4 sm:px-6 py-5 flex-1 w-full space-y-5">
+  <main class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-3.5 sm:py-5 flex-1 w-full space-y-4">
 
     <!-- ========================================================================= -->
-    <!-- TAB 1: DAILY RECONCILIATION TABLE                                         -->
+    <!-- TAB 1: DAILY RECONCILIATION TABLE & MOBILE CARD VIEW                     -->
     <!-- ========================================================================= -->
-    <div id="tabContent-daily" class="space-y-4">
+    <div id="tabContent-daily" class="space-y-3.5">
       
-      <!-- Status Card with Quick Help Link -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center space-x-3.5">
-          <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-base shadow-sm">
+      <!-- Status Card -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-sm sm:text-base shadow-sm shrink-0">
             <i class="fa-solid fa-hotel"></i>
           </div>
           <div>
-            <div class="flex items-center space-x-2">
-              <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">PHB Daily Breakfast Reconciliation Sheet</h2>
-              <span class="text-[10.5px] font-medium text-slate-500">(DRR Data pulled from D-1 Night Audit for today's breakfast)</span>
+            <div class="flex items-center space-x-1.5">
+              <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">PHB Daily Breakfast Sheet</h2>
+              <span class="text-[9.5px] font-bold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">D-1 DRR</span>
             </div>
-            <p class="text-xs text-slate-600 mt-0.5">
-              Entry Status: <span id="filledCount" class="font-black text-emerald-600 font-mono">0</span> / <span id="totalDaysCount" class="font-bold text-slate-700 font-mono">30</span> days recorded | 
-              Over-Pax (Leakage): <span id="leakageDetectedCount" class="font-black text-rose-600 font-mono">0 Cases</span>
+            <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">
+              Entri: <span id="filledCount" class="font-black text-emerald-600 font-mono">0</span> / <span id="totalDaysCount" class="font-bold text-slate-700 font-mono">30</span> hari | 
+              Over-Pax: <span id="leakageDetectedCount" class="font-black text-rose-600 font-mono">0 Kasus</span>
             </p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-3 text-xs">
-          <button onclick="openGuideModal()" class="text-brand-700 font-bold hover:underline flex items-center gap-1 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-200">
-            <i class="fa-solid fa-book-open"></i> Pelajari Arti Kolom &amp; Rumus
+        <!-- Mode Tampilan Switcher Khusus Mobile -->
+        <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold lg:hidden w-full xs:w-auto justify-end">
+          <span class="text-[10px] text-slate-500 mr-1 font-semibold">Tampilan:</span>
+          <button onclick="setMobileView('cards')" id="btnViewCards" class="px-2.5 py-1 rounded-lg bg-white text-brand-700 shadow-sm font-extrabold text-[11px]">
+            <i class="fa-solid fa-id-card mr-1"></i>Kartu HP
           </button>
-          <div class="text-slate-500 font-medium hidden sm:block">
-            <span class="text-rose-600 font-bold">*Formula:</span> Loss = <span class="font-mono font-bold text-slate-700">Leakage × Breakfast Allocation</span>
-          </div>
+          <button onclick="setMobileView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-lg text-slate-600 text-[11px]">
+            <i class="fa-solid fa-table mr-1"></i>Tabel Lebar
+          </button>
         </div>
       </div>
 
-      <!-- Master Daily Reconciliation Table -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto">
+      <!-- 1. MOBILE CARD VIEW CONTAINER (OPTIMIZED FOR ANDROID & IPHONE) -->
+      <div id="mobileCardsContainer" class="lg:hidden space-y-3">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- 2. DESKTOP / TABLET MASTER TABLE VIEW -->
+      <div id="desktopTableContainer" class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto hidden lg:block">
         <table class="w-full text-[11px] border-collapse" id="reconcileTable">
           <thead>
             <tr class="bg-slate-100 border-b border-slate-200 text-[10px] uppercase font-extrabold tracking-wider text-center select-none">
@@ -344,75 +355,69 @@
     <!-- ========================================================================= -->
     <!-- TAB 2: EXECUTIVE SUMMARY & STRATEGIC DASHBOARD                            -->
     <!-- ========================================================================= -->
-    <div id="tabContent-dashboard" class="hidden space-y-5">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total Covers Served</p>
-          <h3 id="cardTotalServed" class="text-2xl font-black font-mono-num text-brand-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Physical covers consumed</p>
+    <div id="tabContent-dashboard" class="hidden space-y-4">
+      <div class="grid grid-cols-2 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total Covers</p>
+          <h3 id="cardTotalServed" class="text-xl sm:text-2xl font-black font-mono-num text-brand-600 mt-0.5">0</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Physical covers</p>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Avg Turnout Ratio</p>
-          <h3 id="cardTurnoutRatio" class="text-2xl font-black font-mono-num text-amber-600 mt-1">0.0%</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">In-house show-up rate</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Avg Turnout</p>
+          <h3 id="cardTurnoutRatio" class="text-xl sm:text-2xl font-black font-mono-num text-amber-600 mt-0.5">0.0%</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Show-up rate</p>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Extra Walk-in Revenue</p>
-          <h3 id="cardExtraRevenue" class="text-xl font-black font-mono-num text-emerald-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Total direct POS receipts</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Walk-in Rev</p>
+          <h3 id="cardExtraRevenue" class="text-lg sm:text-xl font-black font-mono-num text-emerald-600 mt-0.5">0</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Direct POS bill</p>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total No-Show Pax</p>
-          <h3 id="cardTotalNoShow" class="text-2xl font-black font-mono-num text-slate-700 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Entitled guests absent</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">No-Show Pax</p>
+          <h3 id="cardTotalNoShow" class="text-xl sm:text-2xl font-black font-mono-num text-slate-700 mt-0.5">0</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Tamu absent</p>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Leakage / Over-Pax</p>
-          <h3 id="cardTotalLeakage" class="text-2xl font-black font-mono-num text-rose-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled covers admitted</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Over-Pax</p>
+          <h3 id="cardTotalLeakage" class="text-xl sm:text-2xl font-black font-mono-num text-rose-600 mt-0.5">0</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Unbilled leakage</p>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss Exposure</p>
-          <h3 id="cardLossExposure" class="text-xl font-black font-mono-num text-rose-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled risk (Leakage × Breakfast Alloc)</p>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm col-span-2 sm:col-span-1">
+          <p class="text-[10px] sm:text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss</p>
+          <h3 id="cardLossExposure" class="text-lg sm:text-xl font-black font-mono-num text-rose-600 mt-0.5">0</h3>
+          <p class="text-[9.5px] text-slate-400 mt-0.5">Leakage × Alloc</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3.5 sm:gap-5">
+        <div class="lg:col-span-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm">
           <div class="flex items-center justify-between mb-2">
             <div>
-              <h3 class="text-sm font-extrabold text-slate-800">Daily Trend: System Entitlement vs Actual Resto Covers vs Leakage</h3>
-              <p class="text-xs text-slate-500">Numerical values displayed on points with matching dataset colors</p>
+              <h3 class="text-xs sm:text-sm font-extrabold text-slate-800">Daily Trend: Entitled vs Served vs Leakage</h3>
             </div>
-            <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10.5px] font-bold text-slate-600 font-mono">Pax Covers</span>
+            <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-[10px] font-bold text-slate-600 font-mono">Pax</span>
           </div>
-          <div class="h-72">
+          <div class="h-60 sm:h-72">
             <canvas id="trendChart"></canvas>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-extrabold text-slate-800">Diners Segment Breakdown</h3>
-              <p class="text-xs text-slate-500">Proportion of guest breakfast segments</p>
-            </div>
-          </div>
-          <div class="h-52 relative flex items-center justify-center">
+        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+          <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 mb-2">Diners Segment Breakdown</h3>
+          <div class="h-44 sm:h-52 relative flex items-center justify-center">
             <canvas id="compositionChart"></canvas>
           </div>
-          <div class="grid grid-cols-3 gap-2 text-center text-[10px] mt-3">
-            <div class="p-2 rounded-xl bg-blue-50 border border-blue-200">
+          <div class="grid grid-cols-3 gap-1.5 text-center text-[10px] mt-2">
+            <div class="p-1.5 rounded-xl bg-blue-50 border border-blue-200">
               <span class="text-brand-700 font-bold block">In-House</span>
               <span id="pieInhouseVal" class="font-mono text-slate-800 font-extrabold">0%</span>
             </div>
-            <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
-              <span class="text-emerald-700 font-bold block">Walk-In Adult</span>
+            <div class="p-1.5 rounded-xl bg-emerald-50 border border-emerald-200">
+              <span class="text-emerald-700 font-bold block">Walk-In</span>
               <span id="pieAdultVal" class="font-mono text-slate-800 font-extrabold">0%</span>
             </div>
-            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
-              <span class="text-amber-700 font-bold block">Kids Pax</span>
+            <div class="p-1.5 rounded-xl bg-amber-50 border border-amber-200">
+              <span class="text-amber-700 font-bold block">Kids</span>
               <span id="pieKidsVal" class="font-mono text-slate-800 font-extrabold">0%</span>
             </div>
           </div>
@@ -422,201 +427,211 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 1: POST-BREAKFAST ENTRY FORM (DILENGKAPI PENJELASAN UNTUK WAITER)     -->
+  <!-- FLOATING BOTTOM ACTION BAR FOR MOBILE (ANDROID / IOS THUMB-FRIENDLY)     -->
   <!-- ========================================================================= -->
-  <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+  <div class="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-xl flex items-center justify-between gap-2.5 z-40 lg:hidden pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <button onclick="openGuideModal()" class="flex-1 py-3 px-3 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition">
+      <i class="fa-solid fa-book-open text-amber-700 text-sm"></i>
+      <span>Panduan SOP</span>
+    </button>
+    <button onclick="openInputModal()" class="flex-[1.5] py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs flex items-center justify-center space-x-2 shadow-md active:scale-95 transition">
+      <i class="fa-solid fa-plus-circle text-base"></i>
+      <span>+ Entri Hari Ini</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: POST-BREAKFAST ENTRY FORM (TOUCH-OPTIMIZED FOR ANDROID & IOS)   -->
+  <!-- ========================================================================= -->
+  <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
       
       <!-- Modal Header -->
-      <div class="px-6 py-4 bg-gradient-to-r from-[#0068a3] to-[#0076b5] text-white flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-inner">
-            <i class="fa-solid fa-clipboard-check text-base"></i>
+      <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-[#0068a3] to-[#0076b5] text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-inner">
+            <i class="fa-solid fa-clipboard-check text-sm"></i>
           </div>
           <div>
-            <h3 class="text-sm font-extrabold text-white">Post-Breakfast Reconciliation Form</h3>
-            <p class="text-[11px] text-blue-100">D-1 Night Audit DRR vs Actual Physical Restaurant Covers</p>
+            <h3 class="text-xs sm:text-sm font-extrabold text-white">Post-Breakfast Reconciliation</h3>
+            <p class="text-[10px] text-blue-100">D-1 Night Audit DRR vs Actual Resto</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <button onclick="openGuideModal()" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[11px] flex items-center gap-1 shadow-sm transition">
-            <i class="fa-solid fa-circle-info"></i> Petunjuk Kolom
+          <button onclick="openGuideModal()" class="px-2 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[10.5px] flex items-center gap-1 shadow-sm">
+            <i class="fa-solid fa-circle-info"></i> Petunjuk
           </button>
-          <button onclick="closeInputModal()" class="text-white/80 hover:text-white transition p-1">
+          <button onclick="closeInputModal()" class="text-white/80 hover:text-white p-1.5">
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
       </div>
 
-      <!-- Modal Body -->
-      <div class="p-6 overflow-y-auto space-y-4 text-xs">
+      <!-- Modal Body (Scrollable with thumb pads) -->
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs">
         
         <!-- Date Selector Bar -->
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <label class="block text-[10.5px] font-extrabold text-slate-500 uppercase tracking-wider mb-0.5">Select Operational Date:</label>
-            <span id="modalDateLabel" class="text-xs text-brand-700 font-black">Loading date...</span>
+            <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tanggal Operasional:</label>
+            <span id="modalDateLabel" class="text-xs text-brand-700 font-black">Loading...</span>
           </div>
-          <select id="modalDaySelect" onchange="loadDayDataToModal(this.value)" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
+          <select id="modalDaySelect" onchange="loadDayDataToModal(this.value)" class="bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm">
             <!-- Populated via JS -->
           </select>
         </div>
 
         <!-- 1. DRR Data (D-1 Night Audit) -->
-        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+        <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center space-x-2 text-brand-700 font-black">
+            <div class="flex items-center space-x-1.5 text-brand-700 font-black text-xs">
               <i class="fa-solid fa-hotel"></i>
-              <span class="tracking-wide">1. D-1 NIGHT AUDIT DRR DATA (Dari Lembar DRR D-1)</span>
+              <span>1. D-1 DRR (NIGHT AUDIT)</span>
             </div>
-            <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">Sumber: Front Office</span>
+            <span class="text-[9.5px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">FO / DRR</span>
           </div>
           
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Occupied Rms (C) *</label>
-              <input type="number" id="inpOcc" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Total kamar terisi malam tadi</p>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Occ Rms (C) *</label>
+              <input type="number" id="inpOcc" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-slate-800 font-mono text-center focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Kamar isi</p>
             </div>
             <div>
               <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">RO Rms (D) *</label>
-              <input type="number" id="inpRO" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Kamar Room Only (no sarapan)</p>
+              <input type="number" id="inpRO" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-slate-800 font-mono text-center focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Room Only</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp + HU Rms *</label>
-              <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-brand-600 mt-1 leading-tight">Kamar gratis / House Use</p>
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp Rms *</label>
+              <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-2.5 py-2 text-brand-800 font-bold font-mono text-center focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-brand-600 mt-0.5">Kamar Comp</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp + HU Pax *</label>
-              <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-brand-600 mt-1 leading-tight">Jumlah orang di kamar Comp</p>
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp Pax *</label>
+              <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-2.5 py-2 text-brand-800 font-bold font-mono text-center focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-brand-600 mt-0.5">Tamu Comp</p>
             </div>
             <div class="col-span-2 sm:col-span-1">
               <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">In-House Guests *</label>
-              <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-amber-700 font-semibold mt-1 leading-tight">Semua tamu tidur di hotel</p>
+              <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-slate-900 font-bold font-mono text-center focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-amber-700 font-semibold mt-0.5">Semua orang inap</p>
             </div>
           </div>
         </div>
 
         <!-- 2. System Entitlement / PMS -->
-        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+        <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center space-x-2 text-indigo-700 font-black">
+            <div class="flex items-center space-x-1.5 text-indigo-700 font-black text-xs">
               <i class="fa-solid fa-ticket"></i>
-              <span class="tracking-wide">2. PMS SYSTEM ENTITLEMENT (Tamu yang Sah Berhak Sarapan)</span>
+              <span>2. PMS SYSTEM ENTITLEMENT</span>
             </div>
-            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">Kupon / Kuota Resmi</span>
+            <span class="text-[9.5px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">Jatah Sah</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
               <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">PMS Rate Inclusive Pax (F) *</label>
-              <input type="number" id="inpPMS" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Pax kamar bayar paket sarapan (biasanya 2 orang/kamar)</p>
+              <input type="number" id="inpPMS" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Paket kamar bayar include sarapan</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Complimentary &amp; VIP Pax (G) *</label>
-              <input type="number" id="inpComp" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Tamu VIP / voucher khusus yang diizinkan GM makan gratis</p>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Comp &amp; VIP Pax (G) *</label>
+              <input type="number" id="inpComp" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Voucher GM / jatah complimentary</p>
             </div>
           </div>
         </div>
 
         <!-- 3. Restaurant Physical Count & Allocation -->
-        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+        <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center space-x-2 text-amber-700 font-black">
+            <div class="flex items-center space-x-1.5 text-amber-700 font-black text-xs">
               <i class="fa-solid fa-utensils"></i>
-              <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT &amp; ALLOCATION</span>
+              <span>3. RESTO COUNT &amp; ALLOCATION</span>
             </div>
-            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Pintu Resto &amp; Kasir</span>
+            <span class="text-[9.5px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Greeter &amp; Kasir</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <div>
               <label class="block text-[10.5px] font-extrabold text-amber-800 mb-0.5">In-House Seated (I) *</label>
-              <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-amber-900 font-black font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-amber-800 mt-1 leading-tight">Tamu kamar yang riil duduk makan (dari lembar greeter)</p>
+              <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-2.5 py-2 text-amber-900 font-black font-mono text-center focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-amber-800 mt-0.5">Duduk makan riil</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Extra Adult (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
-              <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Dewasa yang bayar tiket tambahan di kasir</p>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Extra Adult (J)</label>
+              <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-slate-800 font-mono text-center focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Bayar kasir dewasa</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Kids Pax (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
-              <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Anak-anak bayar tiket tambahan</p>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Kids Pax (K)</label>
+              <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-slate-800 font-mono text-center focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-slate-400 mt-0.5">Bayar kasir anak</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-black text-amber-800 mb-0.5">Breakfast Allocation *</label>
-              <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-3 py-2 text-amber-900 font-bold font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
-              <p class="text-[9.5px] text-amber-800 mt-1 leading-tight">Pengali nilai kerugian jika over-pax</p>
+              <label class="block text-[10.5px] font-black text-amber-800 mb-0.5">Bkf Allocation *</label>
+              <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-2.5 py-2 text-amber-900 font-bold font-mono text-center focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9px] text-amber-800 mt-0.5">Rate kamar/pax</p>
             </div>
           </div>
         </div>
 
         <!-- Live Calculation Preview Card -->
-        <div class="p-4 rounded-2xl bg-slate-100/90 border border-slate-200">
+        <div class="p-3.5 rounded-2xl bg-slate-100/90 border border-slate-200">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Automated Audit Calculation (Live Preview)</span>
-            <span id="previewAlertBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">Quota Normal</span>
+            <span class="text-[9.5px] font-black text-slate-500 uppercase tracking-wider">Preview Audit Otomatis</span>
+            <span id="previewAlertBadge" class="px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">Status Normal</span>
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span class="text-[10px] text-slate-500 block font-bold">Total Entitled (H)</span>
+            <div class="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[9.5px] text-slate-500 block font-bold">Entitled (H)</span>
               <span id="prevEntitled" class="font-mono font-black text-amber-600 text-sm">0</span>
-              <span class="text-[9px] text-slate-400 block mt-0.5">Hak Kuota (F+G)</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span class="text-[10px] text-slate-500 block font-bold">Total Served (L)</span>
+            <div class="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[9.5px] text-slate-500 block font-bold">Total Served (L)</span>
               <span id="prevServed" class="font-mono font-black text-brand-600 text-sm">0</span>
-              <span class="text-[9px] text-slate-400 block mt-0.5">Total Piring Keluar</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span class="text-[10px] text-slate-500 block font-bold">Variance (M)</span>
+            <div class="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[9.5px] text-slate-500 block font-bold">Variance (M)</span>
               <span id="prevVar" class="font-mono font-black text-slate-700 text-sm">0</span>
-              <span class="text-[9px] text-slate-400 block mt-0.5">Selisih (I - H)</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span class="text-[10px] text-rose-600 font-extrabold block">Leakage Loss (Rp)</span>
+            <div class="p-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[9.5px] text-rose-600 font-extrabold block">Leakage Loss (Rp)</span>
               <span id="prevLeakage" class="font-mono font-black text-rose-600 text-sm">0</span>
-              <span class="text-[9px] text-rose-500 block mt-0.5">Leakage × Alloc</span>
             </div>
           </div>
         </div>
 
         <!-- 4. Remarks, Cashier By & Supervisor -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Catatan Khusus (T)</label>
-            <input type="text" id="inpRemarks" placeholder="Misal: Box bfast tamu flight subuh" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm">
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Remarks / Keterangan</label>
+            <input type="text" id="inpRemarks" placeholder="Misal: Tamu flight subuh" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 shadow-sm">
           </div>
           <div>
-            <label class="block text-[10.5px] font-bold text-brand-700 mb-1"><i class="fa-solid fa-cash-register mr-1"></i>Kasir Resto (Input By)</label>
-            <input type="text" id="inpCashier" placeholder="Nama Kasir POS Sarapan" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-brand-600 shadow-sm">
+            <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5"><i class="fa-solid fa-cash-register mr-1"></i>Kasir POS Resto</label>
+            <input type="text" id="inpCashier" placeholder="Nama Kasir" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold shadow-sm">
           </div>
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor On Duty (U)</label>
-            <input type="text" id="inpSupervisor" placeholder="Nama Captain / Supervisor" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm">
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5"><i class="fa-solid fa-user-check mr-1"></i>Supervisor On Duty</label>
+            <input type="text" id="inpSupervisor" placeholder="Nama Captain/SPV" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 shadow-sm">
           </div>
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-        <button onclick="clearSingleDay()" class="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
-          Reset Today
+      <!-- Modal Footer (Large Thumb Buttons) -->
+      <div class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <button onclick="clearSingleDay()" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+          Reset Hari Ini
         </button>
         <div class="flex items-center space-x-2">
-          <button onclick="closeInputModal()" class="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
-            Cancel
+          <button onclick="closeInputModal()" class="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+            Batal
           </button>
-          <button onclick="saveModalData()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs shadow-md hover:shadow-lg active:scale-95 transition">
-            Save Reconciliation
+          <button onclick="saveModalData()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-black text-xs shadow-md active:scale-95 transition">
+            Simpan Data
           </button>
         </div>
       </div>
@@ -624,105 +639,74 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL 2: PANDUAN KOLOM KHUSUS WAITER / GREETER / CASHIER                  -->
+  <!-- MODAL 2: PANDUAN KOLOM KHUSUS WAITER & KASIR                             -->
   <!-- ========================================================================= -->
-  <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+  <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
       
       <!-- Header Panduan -->
-      <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center text-lg">
+      <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center text-base">
             <i class="fa-solid fa-book-bookmark"></i>
           </div>
           <div>
-            <h3 class="text-sm font-extrabold text-white">Panduan Istilah &amp; Sumber Kolom Rekonsiliasi Sarapan</h3>
-            <p class="text-[11px] text-amber-100">Buku saku untuk Waiter, Greeter Pintu, dan Kasir POS Platinum Hotel</p>
+            <h3 class="text-xs sm:text-sm font-extrabold text-white">Panduan Kolom untuk Waiter &amp; Kasir</h3>
+            <p class="text-[10px] text-amber-100">Buku saku audit sarapan Platinum Hotel</p>
           </div>
         </div>
-        <button onclick="closeGuideModal()" class="text-white/80 hover:text-white transition p-1">
+        <button onclick="closeGuideModal()" class="text-white/80 hover:text-white p-1.5">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
       <!-- Isi Panduan -->
-      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs text-slate-700 leading-relaxed">
         
-        <!-- Section 1 -->
-        <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200">
-          <h4 class="font-extrabold text-brand-800 text-sm mb-2 flex items-center gap-1.5">
+        <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200">
+          <h4 class="font-extrabold text-brand-800 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
             <i class="fa-solid fa-file-invoice"></i> 1. Kolom Dari Laporan DRR Night Audit (Front Office)
           </h4>
-          <ul class="space-y-2 text-slate-700">
-            <li>
-              <strong class="text-slate-900">Occupied Rms (C):</strong> Jumlah kamar yang terisi/dihuni tamu malam sebelumnya.
-            </li>
-            <li>
-              <strong class="text-slate-900">RO Rms (D):</strong> Kamar <em>Room Only</em>. Tamu di kamar ini <strong>TIDAK punya kuota sarapan</strong> gratis. Jika datang ke restoran, wajib diarahkan bayar walk-in.
-            </li>
-            <li>
-              <strong class="text-slate-900">Comp + HU Rms &amp; Pax:</strong> Kamar complimentary (gratisan/voucher) dan House Use (kamar dinas staf/manajemen).
-            </li>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <li><strong>Occupied Rms (C):</strong> Total kamar terisi malam tadi.</li>
+            <li><strong>RO Rms (D):</strong> Kamar Room Only. <strong>Tidak berhak sarapan gratis</strong>.</li>
+            <li><strong>Comp + HU Rms &amp; Pax:</strong> Kamar complimentary (gratis) &amp; dinas manajemen.</li>
             <li class="bg-amber-100/70 p-2 rounded-lg border border-amber-300 text-amber-950 font-medium">
               <strong class="text-amber-900">★ In-House Guests (E):</strong> 
-              <strong>SEMUA orang/tamu</strong> yang tidur di kamar hotel malam tadi tanpa kecuali (gabungan kamar paket sarapan + kamar Room Only + kamar Comp/HU).
+              <strong>SEMUA tamu</strong> yang tidur di kamar hotel (Kamar Paket + Room Only + Comp/HU).
             </li>
           </ul>
         </div>
 
-        <!-- Section 2 -->
-        <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200">
-          <h4 class="font-extrabold text-indigo-900 text-sm mb-2 flex items-center gap-1.5">
-            <i class="fa-solid fa-id-card-clip"></i> 2. Jatah Kuota Sah (PMS System Entitlement)
+        <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200">
+          <h4 class="font-extrabold text-indigo-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-id-card-clip"></i> 2. Jatah Kuota Sah (PMS Entitlement)
           </h4>
-          <ul class="space-y-2 text-slate-700">
-            <li>
-              <strong class="text-slate-900">PMS Incl (F):</strong> Tamu kamar berbayar yang beli paket include sarapan (umumnya 2 orang/kamar).
-            </li>
-            <li>
-              <strong class="text-slate-900">Comp &amp; VIP (G):</strong> Tamu complimentary atau tamu yang memegang voucher sarapan resmi bertanda tangan GM.
-            </li>
-            <li>
-              <strong class="text-slate-900">Entitled (H) = (F + G):</strong> 
-              <strong>Total batas maksimal</strong> tamu hotel yang boleh masuk dan makan tanpa ditagih biaya lagi.
-            </li>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <li><strong>PMS Incl (F):</strong> Tamu kamar berbayar yang beli paket include sarapan (2 orang/kamar).</li>
+            <li><strong>Comp &amp; VIP (G):</strong> Tamu complimentary / voucher sarapan resmi bertanda tangan GM.</li>
+            <li><strong>Entitled (H) = F + G:</strong> Batas maksimal tamu yang boleh makan tanpa tagihan tambahan.</li>
           </ul>
         </div>
 
-        <!-- Section 3 -->
-        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
-          <h4 class="font-extrabold text-amber-900 text-sm mb-2 flex items-center gap-1.5">
-            <i class="fa-solid fa-door-open"></i> 3. Angka Riil Restoran &amp; Kasir (Greeter Sheet)
+        <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200">
+          <h4 class="font-extrabold text-amber-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-door-open"></i> 3. Angka Riil Resto &amp; Kasir
           </h4>
-          <ul class="space-y-2 text-slate-700">
-            <li>
-              <strong class="text-slate-900">In-House Seated (I):</strong> Jumlah tamu kamar paket yang <strong>riil datang dan duduk</strong> makan di resto (dihitung dari checklist centang greeter pintu).
-            </li>
-            <li>
-              <strong class="text-slate-900">Extra Adult (J) &amp; Kids (K):</strong> Tamu kamar tanpa kuota atau tamu walk-in yang <strong>sudah bayar tiket sarapan di kasir POS</strong>.
-            </li>
-            <li>
-              <strong class="text-slate-900">Served (L) = (I + J + K):</strong> Total seluruh fisik piring/pax yang keluar dimakan pagi itu.
-            </li>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <li><strong>In-House Seated (I):</strong> Tamu kamar paket yang <strong>riil duduk makan</strong> (dicentang di pintu oleh greeter).</li>
+            <li><strong>Extra Adult (J) &amp; Kids (K):</strong> Tamu yang <strong>sudah bayar tiket sarapan di kasir POS</strong>.</li>
+            <li><strong>Served (L) = I + J + K:</strong> Total seluruh piring yang keluar pagi ini.</li>
           </ul>
         </div>
 
-        <!-- Section 4 -->
-        <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200">
-          <h4 class="font-extrabold text-rose-900 text-sm mb-2 flex items-center gap-1.5">
-            <i class="fa-solid fa-triangle-exclamation"></i> 4. Audit Selisih, Kebocoran (Leakage) &amp; Alokasi
+        <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200">
+          <h4 class="font-extrabold text-rose-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> 4. Kebocoran (Leakage) &amp; Alokasi
           </h4>
-          <ul class="space-y-2 text-slate-700">
-            <li>
-              <strong class="text-slate-900">No-Show (N):</strong> Tamu yang punya jatah sarapan tapi tidak datang ke restoran.
-            </li>
-            <li>
-              <strong class="text-rose-700">Leakage / Over-Pax (O):</strong> 
-              Kondisi berbahaya di mana tamu yang duduk makan (I) <strong>melebihi jatah sah kuota (H)</strong>. Ini terjadi jika ada tamu RO atau tamu tambahan yang masuk tanpa dicek kuotanya.
-            </li>
-            <li>
-              <strong class="text-slate-900">Breakfast Allocation:</strong> Nilai alokasi sarapan kamar (diisi custom).
-            </li>
+          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <li><strong>Leakage / Over-Pax (O):</strong> Tamu duduk (I) melebihi jatah sah kuota (H). Terjadi jika tamu RO atau tamu tambahan masuk tanpa dicek tiketnya.</li>
+            <li><strong>Breakfast Allocation:</strong> Nilai alokasi sarapan kamar per pax.</li>
             <li class="bg-rose-100 p-2 rounded-lg border border-rose-300 text-rose-950 font-bold">
               Rumus Potensi Kerugian = Leakage (O) × Breakfast Allocation (Rp).
             </li>
@@ -732,20 +716,18 @@
       </div>
 
       <!-- Footer Panduan -->
-      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
-        <button onclick="closeGuideModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs transition">
-          Saya Mengerti (Tutup)
+      <div class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+        <button onclick="closeGuideModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 text-white font-extrabold text-xs transition active:scale-95 text-center">
+          Tutup Panduan
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE & SUPABASE CLOUD SYNC -->
+  <!-- JAVASCRIPT LOGIC ENGINE & MOBILE CARDS RENDERER -->
   <script>
-    // ==========================================
-    // 1. SUPABASE CLIENT INITIALIZATION
-    // ==========================================
+    // 1. SUPABASE CLIENT
     const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1cHZobnZ6dHZ6cWJkaHV1a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNDY4NTIsImV4cCI6MjEwNTgyMjg1Mn0.E-XiAzngGIe_KAe2Znk201Jy55zwLUMOwL4cHhxQCPQ';
 
@@ -770,6 +752,7 @@
     let daysData = [];
     let trendChartInstance = null;
     let compChartInstance = null;
+    let mobileViewMode = 'cards'; // 'cards' or 'table'
 
     function getDaysInMonth(year, month) {
       return new Date(year, month, 0).getDate();
@@ -781,7 +764,7 @@
       return days[d.getDay()];
     }
 
-    function formatPureNumber(num, decimals = 0) {
+    function formatPureNumber(num) {
       if (num === null || num === undefined || isNaN(num) || num === 0) return '0';
       return Math.round(num).toLocaleString('en-US');
     }
@@ -805,6 +788,28 @@
 
     function closeGuideModal() {
       document.getElementById('guideModal').classList.add('hidden');
+    }
+
+    function setMobileView(mode) {
+      mobileViewMode = mode;
+      const cardsEl = document.getElementById('mobileCardsContainer');
+      const tableEl = document.getElementById('desktopTableContainer');
+      const btnCards = document.getElementById('btnViewCards');
+      const btnTable = document.getElementById('btnViewTable');
+
+      if (mode === 'cards') {
+        cardsEl.classList.remove('hidden');
+        tableEl.classList.add('hidden');
+        tableEl.classList.remove('block');
+        btnCards.className = 'px-2.5 py-1 rounded-lg bg-white text-brand-700 shadow-sm font-extrabold text-[11px]';
+        btnTable.className = 'px-2.5 py-1 rounded-lg text-slate-600 text-[11px]';
+      } else {
+        cardsEl.classList.add('hidden');
+        tableEl.classList.remove('hidden');
+        tableEl.classList.add('block');
+        btnTable.className = 'px-2.5 py-1 rounded-lg bg-white text-brand-700 shadow-sm font-extrabold text-[11px]';
+        btnCards.className = 'px-2.5 py-1 rounded-lg text-slate-600 text-[11px]';
+      }
     }
 
     function updateRateSettings() {
@@ -859,9 +864,7 @@
       }
     }
 
-    // ==========================================
     // 2. SUPABASE FETCH & SYNC
-    // ==========================================
     async function loadDataFromSupabase() {
       if (!supabaseClient) return;
 
@@ -1014,7 +1017,9 @@
 
     function renderTable() {
       const tbody = document.getElementById('tableBody');
+      const mobileCardsContainer = document.getElementById('mobileCardsContainer');
       tbody.innerHTML = '';
+      mobileCardsContainer.innerHTML = '';
 
       let filledDaysCount = 0;
       let leakageCasesCount = 0;
@@ -1028,16 +1033,16 @@
 
       daysData.forEach((item, idx) => {
         const c = computeDayRecord(item);
-        const tr = document.createElement('tr');
-        
         const isLeak = c.leakage && c.leakage > 0;
         if (isLeak) leakageCasesCount++;
         if (item.isFilled) filledDaysCount++;
 
+        const allocValueDisplay = item.allocation !== null ? item.allocation : RATES.BREAKFAST_ALLOCATION;
+
+        // 1. RENDER DESKTOP TABLE ROW
+        const tr = document.createElement('tr');
         const zebra = idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white';
         tr.className = `hover:bg-blue-50/80 transition font-mono-num ${item.isFilled ? zebra : 'bg-white/40 text-slate-400'}`;
-
-        const allocValueDisplay = item.allocation !== null ? item.allocation : RATES.BREAKFAST_ALLOCATION;
 
         tr.innerHTML = `
           <td class="py-2.5 px-2 text-center border-r border-slate-200 font-bold ${item.isFilled ? 'text-slate-800' : 'text-slate-400'}">${c.date}</td>
@@ -1082,6 +1087,65 @@
         `;
         tbody.appendChild(tr);
 
+        // 2. RENDER MOBILE CARD (KHUSUS TAMPILAN HP ANDROID / IOS)
+        const mCard = document.createElement('div');
+        mCard.className = `p-3.5 rounded-2xl bg-white border ${isLeak ? 'border-rose-300 ring-1 ring-rose-200' : 'border-slate-200'} shadow-sm space-y-2.5 transition active:scale-[0.99]`;
+
+        mCard.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div class="flex items-center space-x-2">
+              <span class="w-7 h-7 rounded-lg ${item.isFilled ? 'bg-brand-600 text-white' : 'bg-slate-200 text-slate-600'} flex items-center justify-center font-black text-xs font-mono">
+                ${c.dayNum}
+              </span>
+              <div>
+                <span class="font-bold text-xs text-slate-800">${c.date}</span>
+                <span class="text-[10.5px] font-semibold ${c.dayName === 'Saturday' || c.dayName === 'Sunday' ? 'text-amber-600' : 'text-slate-500'}">(${c.dayName})</span>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-1.5">
+              ${isLeak ? '<span class="px-2 py-0.5 rounded-full text-[9.5px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse">LEAKAGE</span>' : ''}
+              <button onclick="openInputModalForDay(${c.dayNum})" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-brand-600 hover:text-white text-brand-700 font-extrabold text-xs border border-slate-200 shadow-sm transition">
+                <i class="fa-solid fa-pen-to-square mr-1"></i>${item.isFilled ? 'Edit' : 'Input'}
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-center text-xs">
+            <div class="p-2 rounded-xl bg-amber-50/70 border border-amber-200/80">
+              <span class="text-[9.5px] text-amber-800 block font-bold">Entitled (H)</span>
+              <span class="font-mono font-black text-amber-900 text-sm">${c.entitled !== null ? formatNum(c.entitled) : '-'}</span>
+              <span class="text-[8.5px] text-amber-700 block">Jatah Kuota</span>
+            </div>
+            <div class="p-2 rounded-xl bg-blue-50/70 border border-blue-200/80">
+              <span class="text-[9.5px] text-brand-700 block font-bold">Seated (I)</span>
+              <span class="font-mono font-black text-brand-900 text-sm">${c.seated !== null ? formatNum(c.seated) : '-'}</span>
+              <span class="text-[8.5px] text-brand-600 block">Duduk Riil</span>
+            </div>
+            <div class="p-2 rounded-xl ${isLeak ? 'bg-rose-100 border border-rose-300' : 'bg-slate-50 border border-slate-200'}">
+              <span class="text-[9.5px] ${isLeak ? 'text-rose-700 font-black' : 'text-slate-500 font-bold'} block">Leakage (O)</span>
+              <span class="font-mono font-black ${isLeak ? 'text-rose-700' : 'text-slate-700'} text-sm">${c.leakage !== null ? c.leakage : '0'}</span>
+              <span class="text-[8.5px] ${isLeak ? 'text-rose-600 font-bold' : 'text-slate-400'} block">Over-Pax</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-100 text-slate-600">
+            <div>
+              <span class="text-slate-400">Total Served:</span>
+              <span class="font-mono font-bold text-slate-800">${c.served !== null ? formatNum(c.served) : '-'} Pax</span>
+            </div>
+            <div>
+              <span class="text-slate-400">Bkf Alloc:</span>
+              <span class="font-mono font-bold text-amber-800">Rp ${formatPureNumber(c.effectiveAlloc)}</span>
+            </div>
+            <div>
+              <span class="text-slate-400">Loss:</span>
+              <span class="font-mono font-black ${isLeak ? 'text-rose-600' : 'text-slate-500'}">Rp ${c.leakLoss !== null ? formatPureNumber(c.leakLoss) : '0'}</span>
+            </div>
+          </div>
+        `;
+        mobileCardsContainer.appendChild(mCard);
+
         if (item.isFilled) {
           sumOcc += Number(c.occ || 0);
           sumRO += Number(c.ro || 0);
@@ -1107,7 +1171,7 @@
 
       document.getElementById('filledCount').textContent = filledDaysCount;
       document.getElementById('totalDaysCount').textContent = daysData.length;
-      document.getElementById('leakageDetectedCount').textContent = leakageCasesCount + ' Cases';
+      document.getElementById('leakageDetectedCount').textContent = leakageCasesCount + ' Kasus';
 
       document.getElementById('totDaysLabel').textContent = filledDaysCount + ' Days';
       document.getElementById('totOcc').textContent = formatNum(sumOcc);
@@ -1164,18 +1228,6 @@
         sumNoShow,
         sumLeakage,
         sumLoss,
-        sumOcc,
-        sumRO,
-        sumCompRms,
-        sumCompPax,
-        sumInh,
-        sumPMS,
-        sumComp,
-        sumEntitled,
-        sumSeated,
-        sumWalkin,
-        sumKids,
-        sumCost,
         divisor
       });
     }
@@ -1193,7 +1245,7 @@
     Chart.register(ChartDataLabels);
 
     function renderCharts(data) {
-      const labels = daysData.map(d => 'Day ' + d.dayNum);
+      const labels = daysData.map(d => 'H-' + d.dayNum);
       
       const entitledSeries = daysData.map(d => {
         if (!d.isFilled) return null;
@@ -1220,56 +1272,48 @@
           labels: labels,
           datasets: [
             {
-              label: 'Actual Covers Served (L)',
+              label: 'Served (L)',
               data: servedSeries,
               borderColor: '#0076b5',
               backgroundColor: 'rgba(0, 118, 181, 0.08)',
-              borderWidth: 2.5,
-              pointBackgroundColor: '#0076b5',
-              pointRadius: 4,
+              borderWidth: 2,
+              pointRadius: 3,
               tension: 0.3,
               fill: true,
               datalabels: {
                 color: '#0076b5',
                 align: 'top',
-                anchor: 'start',
-                offset: 4,
-                font: { family: 'JetBrains Mono', weight: 'bold', size: 9.5 },
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 8.5 },
                 formatter: (val) => val !== null ? val : ''
               }
             },
             {
-              label: 'PMS Entitled Quota (H)',
+              label: 'Entitled (H)',
               data: entitledSeries,
               borderColor: '#d97706',
-              borderWidth: 2,
-              borderDash: [5, 5],
-              pointBackgroundColor: '#d97706',
-              pointRadius: 3.5,
+              borderWidth: 1.5,
+              borderDash: [4, 4],
+              pointRadius: 2.5,
               tension: 0.3,
               fill: false,
               datalabels: {
                 color: '#d97706',
                 align: 'bottom',
-                anchor: 'end',
-                offset: 4,
-                font: { family: 'JetBrains Mono', weight: 'bold', size: 9.5 },
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 8.5 },
                 formatter: (val) => val !== null ? val : ''
               }
             },
             {
-              label: 'Leakage / Over-Pax (O)',
+              label: 'Leakage (O)',
               data: leakageSeries,
               borderColor: '#e11d48',
               backgroundColor: '#e11d48',
               type: 'bar',
-              barThickness: 8,
+              barThickness: 6,
               datalabels: {
                 color: '#e11d48',
                 align: 'top',
-                anchor: 'end',
-                offset: 2,
-                font: { family: 'JetBrains Mono', weight: 'bold', size: 10 },
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 9 },
                 formatter: (val) => (val && val > 0) ? val : ''
               }
             }
@@ -1278,15 +1322,15 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 24, bottom: 8 } },
+          layout: { padding: { top: 16, bottom: 4 } },
           interaction: { mode: 'index', intersect: false },
           plugins: {
-            legend: { labels: { color: '#334155', font: { family: 'Plus Jakarta Sans', size: 10.5, weight: 'bold' } } },
+            legend: { labels: { color: '#334155', font: { family: 'Plus Jakarta Sans', size: 9.5, weight: 'bold' } } },
             tooltip: { enabled: true }
           },
           scales: {
-            x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#64748b', font: { size: 9.5 } } },
-            y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#64748b', font: { size: 10 } }, suggestedMax: 100 }
+            x: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#64748b', font: { size: 8.5 } } },
+            y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { color: '#64748b', font: { size: 9 } } }
           }
         }
       });
@@ -1311,7 +1355,7 @@
             legend: { display: false },
             datalabels: {
               color: '#ffffff',
-              font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 11 },
+              font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 10 },
               formatter: (val) => {
                 if (data.sumServed <= 0) return '';
                 const pct = ((val / data.sumServed) * 100).toFixed(0);
@@ -1352,7 +1396,7 @@
       daysData.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d.dayNum;
-        opt.textContent = `Day ${d.dayNum} (${d.dayName}) ${d.isFilled ? '✓' : ''}`;
+        opt.textContent = `Tgl ${d.dayNum} (${d.dayName}) ${d.isFilled ? '✓' : ''}`;
         select.appendChild(opt);
       });
     }
@@ -1416,11 +1460,11 @@
 
       const badge = document.getElementById('previewAlertBadge');
       if (leakage > 0) {
-        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse';
-        badge.textContent = `ALERT: Leakage of ${leakage} Pax Detected!`;
+        badge.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse';
+        badge.textContent = `ALERT: Leakage ${leakage} Pax!`;
       } else {
-        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
-        badge.textContent = 'Quota Status Normal';
+        badge.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
+        badge.textContent = 'Status Normal';
       }
     }
 
@@ -1497,11 +1541,11 @@
       document.getElementById('tabContent-daily').classList.add('hidden');
       document.getElementById('tabContent-dashboard').classList.add('hidden');
 
-      document.getElementById('tabBtn-daily').className = 'px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition';
-      document.getElementById('tabBtn-dashboard').className = 'px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition';
+      document.getElementById('tabBtn-daily').className = 'flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition text-center';
+      document.getElementById('tabBtn-dashboard').className = 'flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition text-center';
 
       document.getElementById(`tabContent-${tabId}`).classList.remove('hidden');
-      document.getElementById(`tabBtn-${tabId}`).className = 'px-4 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm';
+      document.getElementById(`tabBtn-${tabId}`).className = 'flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm text-center';
 
       if (tabId === 'dashboard') {
         renderTable();
@@ -1518,7 +1562,7 @@
     }
 
     function getMonthName(m) {
-      const names = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const names = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
       return names[m];
     }
 
