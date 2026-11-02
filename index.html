@@ -69,7 +69,7 @@
 
   <!-- TOP HEADER / BRANDING -->
   <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print">
-    <div class="max-w-[1750px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+    <div class="max-w-[1850px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3.5">
         <!-- Logo Card (Using logo.png with Fallback) -->
         <div class="bg-white/95 px-3 py-1.5 rounded-xl shadow-md flex items-center border border-white/60">
@@ -105,7 +105,7 @@
 
   <!-- CONTROL PANEL & TABS & EDITABLE RATE PARAMETERS -->
   <div class="bg-white border-b border-slate-200/90 shadow-sm no-print">
-    <div class="max-w-[1750px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
+    <div class="max-w-[1850px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
       
       <!-- Period Selector -->
       <div class="flex items-center space-x-2.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200">
@@ -146,7 +146,7 @@
         </button>
       </div>
 
-      <!-- EDITABLE RATES PARAMETER BAR -->
+      <!-- EDITABLE RATES PARAMETER BAR (WITH DEFAULT BREAKFAST ALLOCATION) -->
       <div class="flex flex-wrap items-center space-x-2 text-xs bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200">
         <span class="text-slate-500 font-bold text-[11px] mr-1"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rate Settings:</span>
         
@@ -163,6 +163,14 @@
         </div>
         
         <span class="text-slate-300">•</span>
+
+        <!-- Default Breakfast Allocation -->
+        <div class="flex items-center space-x-1 bg-amber-50/80 px-2 py-0.5 rounded-lg border border-amber-200">
+          <label class="text-[11px] text-amber-900 font-bold" title="Default Room Rate Breakfast Allocation (Rp)">Bkf Alloc:</label>
+          <input type="number" id="cfgRateAlloc" value="100000" step="1000" oninput="updateRateSettings()" class="w-24 bg-white border border-amber-300 rounded-md px-2 py-0.5 text-amber-900 font-black font-mono text-right focus:outline-none focus:border-amber-600 shadow-inner">
+        </div>
+
+        <span class="text-slate-300">•</span>
         
         <div class="flex items-center space-x-1">
           <label class="text-[11px] text-slate-600 font-medium">Std Food Cost:</label>
@@ -173,7 +181,7 @@
   </div>
 
   <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-[1750px] mx-auto px-4 sm:px-6 py-5 flex-1 w-full space-y-5">
+  <main class="max-w-[1850px] mx-auto px-4 sm:px-6 py-5 flex-1 w-full space-y-5">
 
     <!-- ========================================================================= -->
     <!-- TAB 1: DAILY RECONCILIATION TABLE                                         -->
@@ -199,7 +207,7 @@
         </div>
 
         <div class="text-xs text-slate-500 font-medium">
-          <span class="text-brand-700 font-bold">*Note:</span> Pure number formatting applied. Comp + HU Rms &amp; Comp + HU Pax are logged from DRR.
+          <span class="text-rose-600 font-bold">*Formula Update:</span> Potential Loss Exposure = <span class="font-mono font-bold text-slate-700">Leakage (Over-Pax) × Breakfast Allocation (Custom)</span>
         </div>
       </div>
 
@@ -214,7 +222,8 @@
               <th colspan="3" class="py-2.5 px-2 border-r border-slate-200 text-indigo-700 bg-indigo-50/70">SYSTEM ENTITLEMENT / PMS</th>
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-amber-800 bg-amber-50/80">RESTAURANT ACTUAL COUNT</th>
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-rose-700 bg-rose-50/80">AUDIT VARIANCE &amp; DISCREPANCY</th>
-              <th colspan="3" class="py-2.5 px-2 border-r border-slate-200 text-emerald-800 bg-emerald-50/70">FINANCIAL &amp; COST</th>
+              <!-- FINANCIAL & COST NOW 4 COLUMNS -->
+              <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-emerald-800 bg-emerald-50/70">FINANCIAL &amp; COST CONTROL</th>
               <th colspan="4" class="py-2.5 px-2 text-slate-600 bg-slate-100">AUDIT, CASHIER &amp; ACTION</th>
             </tr>
             <!-- Column Name Sub-Header Row -->
@@ -222,7 +231,7 @@
               <th class="py-2.5 px-2 border-r border-brand-700 w-24">Date (A)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 w-20">Day (B)</th>
               
-              <!-- DRR Data Columns (Comp + HU Rms & Comp + HU Pax) -->
+              <!-- DRR Data Columns -->
               <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Total Occupied Rooms from D-1 DRR">Occ Rms (C)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Room Only Rooms (No Breakfast)">RO Rms (D)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Complimentary + House Use (HU) Rooms">Comp + HU Rms</th>
@@ -246,9 +255,10 @@
               <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Unbilled Over-Pax Admitted (LEAKAGE)">Leakage (O)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Turnout Ratio % = I / H">Turnout (P)</th>
 
-              <!-- Financial Estimations -->
+              <!-- Financial Estimations (NEW COLUMN: Bkf Alloc) -->
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Custom Breakfast Room Allocation per Pax (Rp)">Bkf Alloc (Rp)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Extra POS Sales = (J*RateAdult) + (K*RateKids)">Walk-in Rev (Q)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = O * RateAdult">Leak Loss (R)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = Leakage (O) * Breakfast Allocation">Leak Loss (R)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-slate-100" title="Estimated Buffet Food Cost = L * RateCost">Food Cost (S)</th>
 
               <!-- Remarks, Cashier, Supervisor & Action -->
@@ -287,6 +297,8 @@
               <td id="totLeakage" class="py-2.5 px-2 text-right text-rose-400 font-black bg-rose-950/60">0</td>
               <td id="totTurnout" class="py-2.5 px-2 text-right text-amber-400">0.0%</td>
 
+              <!-- Bkf Allocation Total -->
+              <td id="totAlloc" class="py-2.5 px-2 text-right text-amber-300">-</td>
               <td id="totRev" class="py-2.5 px-2 text-right text-emerald-400 font-black">0</td>
               <td id="totLoss" class="py-2.5 px-2 text-right text-rose-400 font-black">0</td>
               <td id="totCost" class="py-2.5 px-2 text-right text-slate-300">0</td>
@@ -321,6 +333,8 @@
               <td id="avgLeakage" class="py-2 px-2 text-right text-rose-400 bg-rose-950/40">0.0</td>
               <td id="avgTurnout" class="py-2 px-2 text-right text-amber-400">0.0%</td>
 
+              <!-- Bkf Allocation Avg -->
+              <td id="avgAlloc" class="py-2 px-2 text-right text-amber-300">0</td>
               <td id="avgRev" class="py-2 px-2 text-right text-emerald-400">0</td>
               <td id="avgLoss" class="py-2 px-2 text-right text-rose-400">0</td>
               <td id="avgCost" class="py-2 px-2 text-right text-slate-300">0</td>
@@ -370,7 +384,7 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss Exposure</p>
           <h3 id="cardLossExposure" class="text-xl font-black font-mono-num text-rose-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk (O × Bkf Alloc)</p>
         </div>
       </div>
 
@@ -489,7 +503,7 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODAL POPUP: POST-BREAKFAST ENTRY FORM (COMP+HU RMS & COMP+HU PAX MANUAL) -->
+  <!-- MODAL POPUP: POST-BREAKFAST ENTRY FORM                                    -->
   <!-- ========================================================================= -->
   <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
@@ -524,7 +538,7 @@
           </select>
         </div>
 
-        <!-- 1. DRR Data (D-1 Night Audit) - COMP+HU RMS & COMP+HU PAX MANUAL -->
+        <!-- 1. DRR Data (D-1 Night Audit) -->
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
           <div class="flex items-center space-x-2 text-brand-700 font-black mb-3">
             <i class="fa-solid fa-hotel"></i>
@@ -544,7 +558,7 @@
               <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Pax from Complimentary + House Use Rooms (Manual Entry)">Comp + HU Pax <span class="text-rose-500">*</span></label>
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Pax from Complimentary + House Use Rooms">Comp + HU Pax <span class="text-rose-500">*</span></label>
               <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
             <div class="col-span-2 sm:col-span-1">
@@ -552,7 +566,6 @@
               <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
           </div>
-          <p class="text-[10px] text-slate-500 mt-2 italic">*Note: Enter Comp + HU data manually as reported in the official Night Audit DRR.</p>
         </div>
 
         <!-- 2. System Entitlement / PMS -->
@@ -577,20 +590,25 @@
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
           <div class="flex items-center space-x-2 text-amber-700 font-black mb-3">
             <i class="fa-solid fa-utensils"></i>
-            <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT (06:00 - 10:00 AM WITA)</span>
+            <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT &amp; ALLOCATION</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
-              <label class="block text-[10.5px] font-extrabold text-amber-800 mb-1">In-House Seated (I) <span class="text-slate-400 font-normal">(Door Log)</span> <span class="text-rose-500">*</span></label>
+              <label class="block text-[10.5px] font-extrabold text-amber-800 mb-1">In-House Seated (I) <span class="text-rose-500">*</span></label>
               <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-amber-900 font-black font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Extra Adult Walk-in (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Extra Adult (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
               <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Kids Pax 50% (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Kids Pax (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
               <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <!-- Custom Breakfast Allocation per Pax Input in Modal -->
+            <div>
+              <label class="block text-[10.5px] font-black text-amber-800 mb-1" title="Allocated Room Rate Breakfast per Pax">Bkf Allocation (Rp) <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-3 py-2 text-amber-900 font-bold font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
           </div>
         </div>
@@ -615,7 +633,7 @@
               <span id="prevVar" class="font-mono font-black text-slate-700 text-sm">0</span>
             </div>
             <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
-              <span class="text-[10px] text-rose-600 font-extrabold block">Leakage / Over (O)</span>
+              <span class="text-[10px] text-rose-600 font-extrabold block">Leakage Loss (Rp)</span>
               <span id="prevLeakage" class="font-mono font-black text-rose-600 text-sm">0</span>
             </div>
           </div>
@@ -624,7 +642,7 @@
         <!-- 4. Remarks, Cashier By & Supervisor -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Discrepancy Root Cause (T)</label>
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Root Cause (T)</label>
             <input type="text" id="inpRemarks" placeholder="e.g., Early flight meal box" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
           </div>
           <div>
@@ -632,7 +650,7 @@
             <input type="text" id="inpCashier" placeholder="e.g., Maya / Andi" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-brand-600 shadow-sm transition">
           </div>
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor on Duty / Verified By (U)</label>
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor / Verified By (U)</label>
             <input type="text" id="inpSupervisor" placeholder="e.g., Capt. Hadi / DM Budi" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
           </div>
         </div>
@@ -660,6 +678,7 @@
     let RATES = {
       ADULT_WALKIN: 150000,
       KIDS: 80000,
+      BREAKFAST_ALLOCATION: 100000, // Default Breakfast Allocation
       FOOD_COST_PAX: 42000
     };
 
@@ -692,10 +711,12 @@
     function updateRateSettings() {
       const adult = Number(document.getElementById('cfgRateAdult').value) || 0;
       const kids = Number(document.getElementById('cfgRateKids').value) || 0;
+      const alloc = Number(document.getElementById('cfgRateAlloc').value) || 0;
       const cost = Number(document.getElementById('cfgRateCost').value) || 0;
 
       RATES.ADULT_WALKIN = adult;
       RATES.KIDS = kids;
+      RATES.BREAKFAST_ALLOCATION = alloc;
       RATES.FOOD_COST_PAX = cost;
 
       const hintAdult = document.getElementById('lblHintAdult');
@@ -730,11 +751,21 @@
           seated: null,
           walkin: null,
           kids: null,
+          allocation: null, // Custom Breakfast Allocation per day
           remarks: '',
           cashier: '',
           supervisor: '',
           isFilled: false
         });
+      }
+    }
+
+    // Direct Inline Edit for Breakfast Allocation in Table Row
+    function updateRowAllocation(dayNum, val) {
+      const idx = daysData.findIndex(item => item.dayNum === dayNum);
+      if (idx !== -1) {
+        daysData[idx].allocation = val !== '' ? Number(val) : null;
+        renderTable();
       }
     }
 
@@ -750,7 +781,8 @@
           turnout: null,
           walkinRev: null,
           leakLoss: null,
-          foodCost: null
+          foodCost: null,
+          effectiveAlloc: RATES.BREAKFAST_ALLOCATION
         };
       }
 
@@ -769,7 +801,13 @@
 
       const turnout = entitled > 0 ? (seated / entitled) : 0;
       const walkinRev = (walkin * RATES.ADULT_WALKIN) + (kids * RATES.KIDS);
-      const leakLoss = leakage * RATES.ADULT_WALKIN;
+      
+      // KEY LOGIC: Potential Loss Exposure = Leakage Pax * Breakfast Allocation (Custom)
+      const effectiveAlloc = (d.allocation !== null && d.allocation !== undefined && d.allocation !== '') 
+        ? Number(d.allocation) 
+        : RATES.BREAKFAST_ALLOCATION;
+      
+      const leakLoss = leakage * effectiveAlloc;
       const foodCost = served * RATES.FOOD_COST_PAX;
 
       return {
@@ -782,7 +820,8 @@
         turnout,
         walkinRev,
         leakLoss,
-        foodCost
+        foodCost,
+        effectiveAlloc
       };
     }
 
@@ -798,6 +837,7 @@
       let sumSeated = 0, sumWalkin = 0, sumKids = 0, sumServed = 0;
       let sumVar = 0, sumNoShow = 0, sumLeakage = 0;
       let sumRev = 0, sumLoss = 0, sumCost = 0;
+      let sumAlloc = 0;
 
       daysData.forEach((item, idx) => {
         const c = computeDayRecord(item);
@@ -809,6 +849,8 @@
 
         const zebra = idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white';
         tr.className = `hover:bg-blue-50/80 transition font-mono-num ${item.isFilled ? zebra : 'bg-white/40 text-slate-400'}`;
+
+        const allocValueDisplay = item.allocation !== null ? item.allocation : RATES.BREAKFAST_ALLOCATION;
 
         tr.innerHTML = `
           <td class="py-2.5 px-2 text-center border-r border-slate-200 font-bold ${item.isFilled ? 'text-slate-800' : 'text-slate-400'}">${c.date}</td>
@@ -833,6 +875,11 @@
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-500">${c.noShow !== null ? formatNum(c.noShow) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'bg-rose-100 text-rose-700 animate-pulse' : ''}">${c.leakage !== null ? (c.leakage > 0 ? c.leakage : 0) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-amber-700 font-bold">${c.turnout !== null ? (c.turnout * 100).toFixed(1) + '%' : '-'}</td>
+
+          <!-- Custom Bkf Allocation Input per Row -->
+          <td class="py-2 px-1 text-right border-r border-slate-200">
+            <input type="number" step="1000" value="${allocValueDisplay}" onchange="updateRowAllocation(${c.dayNum}, this.value)" class="w-20 px-1.5 py-0.5 text-right font-bold text-amber-800 bg-amber-50/60 border border-amber-200 rounded focus:bg-white focus:outline-none focus:border-amber-600 text-[10.5px]">
+          </td>
 
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-emerald-700 font-bold">${c.walkinRev !== null ? formatPureNumber(c.walkinRev) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'text-rose-600' : 'text-slate-400'}">${c.leakLoss !== null ? formatPureNumber(c.leakLoss) : '-'}</td>
@@ -868,6 +915,7 @@
           sumRev += Number(c.walkinRev || 0);
           sumLoss += Number(c.leakLoss || 0);
           sumCost += Number(c.foodCost || 0);
+          sumAlloc += Number(c.effectiveAlloc || 0);
         }
       });
 
@@ -893,6 +941,8 @@
       document.getElementById('totLeakage').textContent = formatNum(sumLeakage);
       const avgTurnoutMTD = filledDaysCount > 0 ? (sumSeated / (sumEntitled || 1)) * 100 : 0;
       document.getElementById('totTurnout').textContent = avgTurnoutMTD.toFixed(1) + '%';
+      
+      document.getElementById('totAlloc').textContent = '-';
       document.getElementById('totRev').textContent = formatPureNumber(sumRev);
       document.getElementById('totLoss').textContent = formatPureNumber(sumLoss);
       document.getElementById('totCost').textContent = formatPureNumber(sumCost);
@@ -914,6 +964,8 @@
       document.getElementById('avgNoShow').textContent = formatNum(sumNoShow / divisor, 1);
       document.getElementById('avgLeakage').textContent = formatNum(sumLeakage / divisor, 1);
       document.getElementById('avgTurnout').textContent = avgTurnoutMTD.toFixed(1) + '%';
+
+      document.getElementById('avgAlloc').textContent = formatPureNumber(sumAlloc / divisor);
       document.getElementById('avgRev').textContent = formatPureNumber(sumRev / divisor);
       document.getElementById('avgLoss').textContent = formatPureNumber(sumLoss / divisor);
       document.getElementById('avgCost').textContent = formatPureNumber(sumCost / divisor);
@@ -999,6 +1051,14 @@
           <td class="py-2.5 px-3 text-right text-rose-600">${formatNum(data.sumLeakage / data.divisor, 1)}</td>
           <td class="py-2.5 px-3 text-center text-rose-600 font-bold">Target: 0 Cases</td>
           <td class="py-2.5 px-3 font-sans text-rose-600 font-bold">Guests dining without quota/billing. Mandatory FO post-charge!</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-rose-700">Potential Loss Exposure (Unbilled Financial Risk)</td>
+          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Bkf Allocation (Custom)</td>
+          <td class="py-2.5 px-3 text-right text-rose-700 font-black">${formatPureNumber(data.sumLoss)}</td>
+          <td class="py-2.5 px-3 text-right text-rose-700">${formatPureNumber(data.sumLoss / data.divisor)}</td>
+          <td class="py-2.5 px-3 text-center text-rose-700 font-bold">Loss Prevention</td>
+          <td class="py-2.5 px-3 font-sans text-rose-700 font-bold">Unbilled loss evaluated at custom breakfast room allocation rate.</td>
         </tr>
         <tr class="hover:bg-slate-50">
           <td class="py-2.5 px-3 font-bold text-emerald-700">Direct Extra Walk-in Revenue (Q)</td>
@@ -1254,6 +1314,11 @@
       document.getElementById('inpWalkin').value = d.walkin !== null ? d.walkin : '';
       document.getElementById('inpKids').value = d.kids !== null ? d.kids : '';
       
+      // Load custom allocation or fallback to global default
+      document.getElementById('inpAlloc').value = (d.allocation !== null && d.allocation !== undefined) 
+        ? d.allocation 
+        : RATES.BREAKFAST_ALLOCATION;
+
       document.getElementById('inpRemarks').value = d.remarks || '';
       document.getElementById('inpCashier').value = d.cashier || '';
       document.getElementById('inpSupervisor').value = d.supervisor || 'Captain On Duty';
@@ -1278,11 +1343,14 @@
 
       const variance = seated - entitled;
       const leakage = seated > entitled ? (seated - entitled) : 0;
+      
+      const alloc = Number(document.getElementById('inpAlloc').value) || RATES.BREAKFAST_ALLOCATION;
+      const estimatedLoss = leakage * alloc;
 
       document.getElementById('prevEntitled').textContent = entitled;
       document.getElementById('prevServed').textContent = served;
       document.getElementById('prevVar').textContent = (variance > 0 ? '+' : '') + variance;
-      document.getElementById('prevLeakage').textContent = leakage;
+      document.getElementById('prevLeakage').textContent = formatPureNumber(estimatedLoss);
 
       const badge = document.getElementById('previewAlertBadge');
       if (leakage > 0) {
@@ -1311,6 +1379,7 @@
       const seatedVal = document.getElementById('inpSeated').value;
       const walkinVal = document.getElementById('inpWalkin').value;
       const kidsVal = document.getElementById('inpKids').value;
+      const allocVal = document.getElementById('inpAlloc').value;
 
       daysData[idx].occ = occVal !== '' ? Number(occVal) : 0;
       daysData[idx].ro = roVal !== '' ? Number(roVal) : 0;
@@ -1324,6 +1393,7 @@
       daysData[idx].seated = seatedVal !== '' ? Number(seatedVal) : 0;
       daysData[idx].walkin = walkinVal !== '' ? Number(walkinVal) : 0;
       daysData[idx].kids = kidsVal !== '' ? Number(kidsVal) : 0;
+      daysData[idx].allocation = allocVal !== '' ? Number(allocVal) : RATES.BREAKFAST_ALLOCATION;
 
       daysData[idx].remarks = document.getElementById('inpRemarks').value;
       daysData[idx].cashier = document.getElementById('inpCashier').value;
@@ -1349,6 +1419,7 @@
       daysData[idx].seated = null;
       daysData[idx].walkin = null;
       daysData[idx].kids = null;
+      daysData[idx].allocation = null;
       daysData[idx].remarks = '';
       daysData[idx].cashier = '';
       daysData[idx].supervisor = '';
@@ -1387,11 +1458,11 @@
     }
 
     function exportCSV() {
-      let csv = 'Date,Day,Occupied Rooms,RO Rooms,Comp + HU Rooms,Comp + HU Pax,In-House Guests,PMS Incl,Comp VIP,Total Entitled,In-House Seated,Extra Adult,Kids,Total Served,Variance,No-Show,Leakage Over-Pax,Turnout Ratio,Walk-in Revenue,Leakage Loss,Est Food Cost,Remarks,Cashier,Supervisor\n';
+      let csv = 'Date,Day,Occupied Rooms,RO Rooms,Comp + HU Rooms,Comp + HU Pax,In-House Guests,PMS Incl,Comp VIP,Total Entitled,In-House Seated,Extra Adult,Kids,Total Served,Variance,No-Show,Leakage Over-Pax,Turnout Ratio,Breakfast Allocation,Walk-in Revenue,Leakage Loss,Est Food Cost,Remarks,Cashier,Supervisor\n';
 
       daysData.forEach(d => {
         const c = computeDayRecord(d);
-        csv += `"${c.date}","${c.dayName}","${c.occ || 0}","${c.ro || 0}","${c.compRms || 0}","${c.compPax || 0}","${c.inh || 0}","${c.pms || 0}","${c.comp || 0}","${c.entitled || 0}","${c.seated || 0}","${c.walkin || 0}","${c.kids || 0}","${c.served || 0}","${c.variance || 0}","${c.noShow || 0}","${c.leakage || 0}","${(c.turnout * 100 || 0).toFixed(1)}%","${c.walkinRev || 0}","${c.leakLoss || 0}","${c.foodCost || 0}","${c.remarks || ''}","${c.cashier || ''}","${c.supervisor || ''}"\n`;
+        csv += `"${c.date}","${c.dayName}","${c.occ || 0}","${c.ro || 0}","${c.compRms || 0}","${c.compPax || 0}","${c.inh || 0}","${c.pms || 0}","${c.comp || 0}","${c.entitled || 0}","${c.seated || 0}","${c.walkin || 0}","${c.kids || 0}","${c.served || 0}","${c.variance || 0}","${c.noShow || 0}","${c.leakage || 0}","${(c.turnout * 100 || 0).toFixed(1)}%","${c.effectiveAlloc || 0}","${c.walkinRev || 0}","${c.leakLoss || 0}","${c.foodCost || 0}","${c.remarks || ''}","${c.cashier || ''}","${c.supervisor || ''}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
