@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHB - Breakfast Reconciliation & Audit System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js DataLabels Plugin CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7fc',
+              100: '#e0eff8',
+              200: '#b9def2',
+              500: '#0091c4',
+              600: '#0076b5',
+              700: '#006196',
+              800: '#004f7a',
+              900: '#003a5b',
+            },
+            platinum: {
+              gold: '#ac9e7e',
+              lightgold: '#c5a880',
+              canvas: '#ebeff3',
+              card: '#ffffff',
+              border: '#dbe2ea',
+              input: '#f8fafc'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ebeff3; }
+    .font-mono-num { font-family: 'JetBrains Mono', monospace; }
+    
+    ::-webkit-scrollbar { height: 8px; width: 8px; }
+    ::-webkit-scrollbar-track { background: #e2e8f0; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; font-size: 8pt; }
+      .print-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+      table { font-size: 7.5pt !important; }
+      th, td { padding: 3px 4px !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- TOP HEADER / BRANDING -->
+  <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print">
+    <div class="max-w-[1750px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3.5">
+        <!-- Logo Card -->
+        <div class="bg-white px-3.5 py-1.5 rounded-xl shadow-md flex items-center space-x-2 border border-white/40">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ac9e7e] to-[#c5a880] flex items-center justify-center text-white font-extrabold text-sm shadow">
+            P
+          </div>
+          <div class="leading-tight">
+            <span class="block text-xs font-black tracking-wider text-slate-800">PLATINUM</span>
+            <span class="block text-[8px] font-bold tracking-widest text-[#ac9e7e] uppercase">Hotel &amp; Convention</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base sm:text-lg font-extrabold text-white tracking-wide">Breakfast Reconciliation &amp; Audit</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 backdrop-blur-sm uppercase">FBM System</span>
+          </div>
+          <p class="text-[11.5px] text-blue-100/90 font-medium">Daily PMS &amp; DRR Reconciliation, Actual Physical Count, Loss Prevention &amp; Cost Control</p>
+        </div>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex items-center space-x-2.5">
+        <button id="btnOpenInputModal" onclick="openInputModal()" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-brand-700 font-extrabold text-xs flex items-center space-x-2 shadow-md hover:shadow-lg active:scale-95 transition-all border border-white/80">
+          <i class="fa-solid fa-plus-circle text-brand-600 text-sm"></i>
+          <span>+ Post-Breakfast Entry</span>
+        </button>
+        <button onclick="exportCSV()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold flex items-center space-x-1.5 border border-white/30 backdrop-blur-sm transition">
+          <i class="fa-solid fa-file-excel text-emerald-300"></i>
+          <span class="hidden sm:inline">Export CSV</span>
+        </button>
+        <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold flex items-center space-x-1.5 border border-white/30 backdrop-blur-sm transition">
+          <i class="fa-solid fa-print text-sky-200"></i>
+          <span class="hidden sm:inline">Print Report</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTROL PANEL & TABS & EDITABLE RATE PARAMETERS -->
+  <div class="bg-white border-b border-slate-200/90 shadow-sm no-print">
+    <div class="max-w-[1750px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Period Selector -->
+      <div class="flex items-center space-x-2.5 bg-slate-100/90 p-1.5 rounded-xl border border-slate-200">
+        <div class="flex items-center space-x-1.5 px-2 text-xs font-bold text-slate-600">
+          <i class="fa-regular fa-calendar-days text-brand-600"></i>
+          <span>Period:</span>
+        </div>
+        <select id="selMonth" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
+          <option value="1">January</option>
+          <option value="2">February</option>
+          <option value="3">March</option>
+          <option value="4">April</option>
+          <option value="5">May</option>
+          <option value="6">June</option>
+          <option value="7">July</option>
+          <option value="8">August</option>
+          <option value="9">September</option>
+          <option value="10">October</option>
+          <option value="11" selected>November</option>
+          <option value="12">December</option>
+        </select>
+        <select id="selYear" onchange="changePeriod()" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+        </select>
+        <span id="periodBadge" class="text-xs font-extrabold text-brand-700 px-3 py-1 rounded-lg bg-brand-50 border border-brand-200 shadow-sm">November 2026</span>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+        <button onclick="switchTab('daily')" id="tabBtn-daily" class="px-4 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm">
+          <i class="fa-solid fa-table-list mr-1.5"></i>Daily Reconciliation
+        </button>
+        <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition">
+          <i class="fa-solid fa-chart-pie mr-1.5"></i>Executive Summary &amp; Audit
+        </button>
+      </div>
+
+      <!-- EDITABLE RATES PARAMETER BAR -->
+      <div class="flex flex-wrap items-center space-x-2 text-xs bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200">
+        <span class="text-slate-500 font-bold text-[11px] mr-1"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rate Settings:</span>
+        
+        <div class="flex items-center space-x-1">
+          <label class="text-[11px] text-slate-600 font-medium">Extra Adult:</label>
+          <input type="number" id="cfgRateAdult" value="150000" step="1000" oninput="updateRateSettings()" class="w-24 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
+        </div>
+        
+        <span class="text-slate-300">•</span>
+        
+        <div class="flex items-center space-x-1">
+          <label class="text-[11px] text-slate-600 font-medium">Extra Kids:</label>
+          <input type="number" id="cfgRateKids" value="80000" step="1000" oninput="updateRateSettings()" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-slate-800 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
+        </div>
+        
+        <span class="text-slate-300">•</span>
+        
+        <div class="flex items-center space-x-1">
+          <label class="text-[11px] text-slate-600 font-medium">Std Food Cost:</label>
+          <input type="number" id="cfgRateCost" value="42000" step="500" oninput="updateRateSettings()" class="w-20 bg-white border border-slate-300 rounded-lg px-2 py-0.5 text-brand-700 font-bold font-mono text-right focus:outline-none focus:border-brand-600 shadow-inner">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-[1750px] mx-auto px-4 sm:px-6 py-5 flex-1 w-full space-y-5">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: DAILY RECONCILIATION TABLE                                         -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-daily" class="space-y-4">
+      
+      <!-- Status Card -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-base shadow-sm">
+            <i class="fa-solid fa-hotel"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">PHB Daily Breakfast Reconciliation Sheet</h2>
+              <span class="text-[10.5px] font-medium text-slate-500">(DRR Data pulled from D-1 Night Audit for today's breakfast)</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-0.5">
+              Entry Status: <span id="filledCount" class="font-black text-emerald-600 font-mono">0</span> / <span id="totalDaysCount" class="font-bold text-slate-700 font-mono">30</span> days recorded | 
+              Over-Pax (Leakage): <span id="leakageDetectedCount" class="font-black text-rose-600 font-mono">0 Cases</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="text-xs text-slate-500 font-medium">
+          <span class="text-brand-700 font-bold">*Note:</span> Pure number formatting applied. Comp + HU Rms &amp; Comp + HU Pax are logged from DRR.
+        </div>
+      </div>
+
+      <!-- Master Daily Reconciliation Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto">
+        <table class="w-full text-[11px] border-collapse" id="reconcileTable">
+          <thead>
+            <!-- Category Super-Header Row -->
+            <tr class="bg-slate-100 border-b border-slate-200 text-[10px] uppercase font-extrabold tracking-wider text-center select-none">
+              <th colspan="2" class="py-2.5 px-2 border-r border-slate-200 text-slate-600 bg-slate-100">AUTO CALENDAR</th>
+              <th colspan="5" class="py-2.5 px-2 border-r border-slate-200 text-brand-700 bg-blue-50/70">D-1 DRR (NIGHT AUDIT)</th>
+              <th colspan="3" class="py-2.5 px-2 border-r border-slate-200 text-indigo-700 bg-indigo-50/70">SYSTEM ENTITLEMENT / PMS</th>
+              <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-amber-800 bg-amber-50/80">RESTAURANT ACTUAL COUNT</th>
+              <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-rose-700 bg-rose-50/80">AUDIT VARIANCE &amp; DISCREPANCY</th>
+              <th colspan="3" class="py-2.5 px-2 border-r border-slate-200 text-emerald-800 bg-emerald-50/70">FINANCIAL &amp; COST</th>
+              <th colspan="4" class="py-2.5 px-2 text-slate-600 bg-slate-100">AUDIT, CASHIER &amp; ACTION</th>
+            </tr>
+            <!-- Column Name Sub-Header Row -->
+            <tr class="bg-[#0076b5] text-white font-extrabold border-b border-brand-800 text-center select-none text-[10.5px]">
+              <th class="py-2.5 px-2 border-r border-brand-700 w-24">Date (A)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 w-20">Day (B)</th>
+              
+              <!-- DRR Data Columns (Comp + HU Rms & Comp + HU Pax) -->
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Total Occupied Rooms from D-1 DRR">Occ Rms (C)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Room Only Rooms (No Breakfast)">RO Rms (D)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Complimentary + House Use (HU) Rooms">Comp + HU Rms</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Pax from Complimentary + House Use Rooms">Comp + HU Pax</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/80 font-black" title="Total Physical In-House Guests">In-House Guests (E)</th>
+
+              <!-- Entitlement System Columns -->
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Rate Inclusive Breakfast (Paid Packages)">PMS Incl (F)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Comp Room Pax + GM Authorized Vouchers">Comp/VIP (G)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/30 text-amber-100 font-black" title="Total Authorized Entitlement = F + G">Entitled (H)</th>
+
+              <!-- Resto Count Columns -->
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/40 text-amber-50 font-black" title="Actual In-House Diners Seated (Door Greeter Log)">In-House Seated (I)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Paid Extra / Walk-in Adults">Extra Pax (J)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Children (50% Rate)">Kids (K)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-800 text-white font-black" title="Total Actual Physical Covers Served = I + J + K">Served (L)</th>
+
+              <!-- Audit Variance Columns -->
+              <th class="py-2.5 px-2 border-r border-brand-700" title="In-House Variance = I - H">Variance (M)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-blue-100" title="Entitled Guests Who Skipped Breakfast">No-Show (N)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Unbilled Over-Pax Admitted (LEAKAGE)">Leakage (O)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Turnout Ratio % = I / H">Turnout (P)</th>
+
+              <!-- Financial Estimations -->
+              <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Extra POS Sales = (J*RateAdult) + (K*RateKids)">Walk-in Rev (Q)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = O * RateAdult">Leak Loss (R)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-slate-100" title="Estimated Buffet Food Cost = L * RateCost">Food Cost (S)</th>
+
+              <!-- Remarks, Cashier, Supervisor & Action -->
+              <th class="py-2.5 px-2 border-r border-brand-700 w-36 text-left">Remarks / Root Cause (T)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 w-24 text-center bg-blue-700/50" title="Cashier on Duty / Transaction Input by">Cashier By</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 w-24">Supervisor (U)</th>
+              <th class="py-2.5 px-2 w-14 no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-200 font-mono-num text-[11px] text-slate-700">
+            <!-- Dynamically rendered via JS -->
+          </tbody>
+          <tfoot class="bg-slate-900 border-t-2 border-brand-600 font-bold font-mono-num text-white shadow-lg">
+            <!-- MTD Total Row -->
+            <tr id="rowTotalMTD" class="border-b border-slate-800 bg-slate-900">
+              <td class="py-2.5 px-2 text-center text-amber-400 font-sans font-black">TOTAL MTD</td>
+              <td id="totDaysLabel" class="py-2.5 px-2 text-center text-slate-300 font-sans">0 Days</td>
+              
+              <td id="totOcc" class="py-2.5 px-2 text-right text-sky-300">0</td>
+              <td id="totRO" class="py-2.5 px-2 text-right text-sky-300">0</td>
+              <td id="totCompRms" class="py-2.5 px-2 text-right text-sky-300">0</td>
+              <td id="totCompPax" class="py-2.5 px-2 text-right text-sky-300">0</td>
+              <td id="totInh" class="py-2.5 px-2 text-right text-sky-200 font-black">0</td>
+
+              <td id="totPMS" class="py-2.5 px-2 text-right text-indigo-300">0</td>
+              <td id="totComp" class="py-2.5 px-2 text-right text-indigo-300">0</td>
+              <td id="totEntitled" class="py-2.5 px-2 text-right text-amber-400 font-black bg-slate-800/60">0</td>
+
+              <td id="totSeated" class="py-2.5 px-2 text-right text-amber-300 font-black bg-slate-800/80">0</td>
+              <td id="totWalkin" class="py-2.5 px-2 text-right">0</td>
+              <td id="totKids" class="py-2.5 px-2 text-right">0</td>
+              <td id="totServed" class="py-2.5 px-2 text-right text-sky-400 font-black bg-slate-800">0</td>
+
+              <td id="totVar" class="py-2.5 px-2 text-right">0</td>
+              <td id="totNoShow" class="py-2.5 px-2 text-right text-slate-400">0</td>
+              <td id="totLeakage" class="py-2.5 px-2 text-right text-rose-400 font-black bg-rose-950/60">0</td>
+              <td id="totTurnout" class="py-2.5 px-2 text-right text-amber-400">0.0%</td>
+
+              <td id="totRev" class="py-2.5 px-2 text-right text-emerald-400 font-black">0</td>
+              <td id="totLoss" class="py-2.5 px-2 text-right text-rose-400 font-black">0</td>
+              <td id="totCost" class="py-2.5 px-2 text-right text-slate-300">0</td>
+
+              <td class="py-2.5 px-2 text-slate-300 font-sans text-xs">Closed Reconciliation</td>
+              <td class="py-2.5 px-2 text-center text-slate-300 font-sans text-xs">POS Cashier</td>
+              <td class="py-2.5 px-2 text-center text-slate-300 font-sans text-xs">FBM Audit</td>
+              <td class="py-2.5 px-2 no-print"></td>
+            </tr>
+            <!-- Daily Average Row -->
+            <tr id="rowDailyAverage" class="bg-slate-950 text-slate-300 text-[10.5px]">
+              <td class="py-2 px-2 text-center text-sky-400 font-sans font-bold">DAILY AVG</td>
+              <td class="py-2 px-2 text-center text-slate-400 font-sans">Per Day</td>
+
+              <td id="avgOcc" class="py-2 px-2 text-right text-sky-300">0.0</td>
+              <td id="avgRO" class="py-2 px-2 text-right text-sky-300">0.0</td>
+              <td id="avgCompRms" class="py-2 px-2 text-right text-sky-300">0.0</td>
+              <td id="avgCompPax" class="py-2 px-2 text-right text-sky-300">0.0</td>
+              <td id="avgInh" class="py-2 px-2 text-right text-sky-200 font-bold">0.0</td>
+
+              <td id="avgPMS" class="py-2 px-2 text-right text-indigo-300">0.0</td>
+              <td id="avgComp" class="py-2 px-2 text-right text-indigo-300">0.0</td>
+              <td id="avgEntitled" class="py-2 px-2 text-right text-amber-400 font-bold">0.0</td>
+
+              <td id="avgSeated" class="py-2 px-2 text-right text-amber-300 font-bold">0.0</td>
+              <td id="avgWalkin" class="py-2 px-2 text-right">0.0</td>
+              <td id="avgKids" class="py-2 px-2 text-right">0.0</td>
+              <td id="avgServed" class="py-2 px-2 text-right text-sky-400 font-bold">0.0</td>
+
+              <td id="avgVar" class="py-2 px-2 text-right">0.0</td>
+              <td id="avgNoShow" class="py-2 px-2 text-right text-slate-400">0.0</td>
+              <td id="avgLeakage" class="py-2 px-2 text-right text-rose-400 bg-rose-950/40">0.0</td>
+              <td id="avgTurnout" class="py-2 px-2 text-right text-amber-400">0.0%</td>
+
+              <td id="avgRev" class="py-2 px-2 text-right text-emerald-400">0</td>
+              <td id="avgLoss" class="py-2 px-2 text-right text-rose-400">0</td>
+              <td id="avgCost" class="py-2 px-2 text-right text-slate-300">0</td>
+
+              <td class="py-2 px-2 text-slate-400 font-sans text-xs">Kitchen Production Baseline</td>
+              <td class="py-2 px-2 text-center text-slate-500 font-sans text-xs">-</td>
+              <td class="py-2 px-2 text-center text-slate-500 font-sans text-xs">-</td>
+              <td class="py-2 px-2 no-print"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: EXECUTIVE SUMMARY & STRATEGIC DASHBOARD                            -->
+    <!-- ========================================================================= -->
+    <div id="tabContent-dashboard" class="hidden space-y-5">
+      
+      <!-- Top 6 Executive KPI Scorecards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total Covers Served</p>
+          <h3 id="cardTotalServed" class="text-2xl font-black font-mono-num text-brand-600 mt-1">0</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Physical covers consumed</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Avg Turnout Ratio</p>
+          <h3 id="cardTurnoutRatio" class="text-2xl font-black font-mono-num text-amber-600 mt-1">0.0%</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">In-house show-up rate</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Extra Walk-in Revenue</p>
+          <h3 id="cardExtraRevenue" class="text-xl font-black font-mono-num text-emerald-600 mt-1">0</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Total direct POS receipts</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total No-Show Pax</p>
+          <h3 id="cardTotalNoShow" class="text-2xl font-black font-mono-num text-slate-700 mt-1">0</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Entitled guests absent</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Leakage / Over-Pax</p>
+          <h3 id="cardTotalLeakage" class="text-2xl font-black font-mono-num text-rose-600 mt-1">0</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled covers admitted</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss Exposure</p>
+          <h3 id="cardLossExposure" class="text-xl font-black font-mono-num text-rose-600 mt-1">0</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk</p>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800">Daily Trend: System Entitlement vs Actual Resto Covers vs Leakage</h3>
+              <p class="text-xs text-slate-500">Numerical values displayed on points with matching dataset colors</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10.5px] font-bold text-slate-600 font-mono">Pax Covers</span>
+          </div>
+          <div class="h-72">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800">Diners Segment Breakdown</h3>
+              <p class="text-xs text-slate-500">Proportion of guest breakfast segments</p>
+            </div>
+          </div>
+          <div class="h-52 relative flex items-center justify-center">
+            <canvas id="compositionChart"></canvas>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center text-[10px] mt-3">
+            <div class="p-2 rounded-xl bg-blue-50 border border-blue-200">
+              <span class="text-brand-700 font-bold block">In-House</span>
+              <span id="pieInhouseVal" class="font-mono text-slate-800 font-extrabold">0%</span>
+            </div>
+            <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+              <span class="text-emerald-700 font-bold block">Walk-In Adult</span>
+              <span id="pieAdultVal" class="font-mono text-slate-800 font-extrabold">0%</span>
+            </div>
+            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
+              <span class="text-amber-700 font-bold block">Kids Pax</span>
+              <span id="pieKidsVal" class="font-mono text-slate-800 font-extrabold">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Audit Breakdown Table -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+        <h3 class="text-sm font-extrabold text-slate-800 mb-3">Audit Reconciliation: D-1 Night Audit vs POS Cashier vs Resto (MTD vs Daily Average)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-100 text-slate-600 font-extrabold border-b border-slate-200">
+              <tr>
+                <th class="py-2.5 px-3">Operational &amp; Financial Metric</th>
+                <th class="py-2.5 px-3">Data Source / Formula</th>
+                <th class="py-2.5 px-3 text-right">MTD Total</th>
+                <th class="py-2.5 px-3 text-right">Daily Avg</th>
+                <th class="py-2.5 px-3 text-center">Industry Benchmark</th>
+                <th class="py-2.5 px-3">FBM Analysis &amp; Action Plan</th>
+              </tr>
+            </thead>
+            <tbody id="auditSummaryTbody" class="divide-y divide-slate-200 font-mono-num text-slate-700">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Cross Departmental Action Matrix (SLA) -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
+        <h3 class="text-sm font-extrabold text-slate-800 mb-1">Cross-Departmental Internal Control Matrix (FBM - FO - CHEF - FINANCE)</h3>
+        <p class="text-xs text-slate-500 mb-4">Integrated SOP to prevent revenue leakage and maintain breakfast service standards</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center space-x-2 text-brand-700 font-extrabold mb-2">
+              <i class="fa-solid fa-bell-concierge"></i>
+              <span>Front Office (FO)</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
+              Verify Room Only (RO) and Complimentary / House Use (HU) rooms upon check-in. If over-pax covers are spotted at the outlet, DM immediately posts the charge to the guest folio prior to checkout.
+            </p>
+            <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-brand-800 text-[10px] font-bold">SLA: Zero Unbilled Checkout</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center space-x-2 text-amber-700 font-extrabold mb-2">
+              <i class="fa-solid fa-door-open"></i>
+              <span>F&amp;B Service (Greeter)</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
+              Hostess must cross-check room numbers against the Night Audit Expected Breakfast List. Guests without breakfast entitlement must be directed to the cashier for settlement.
+            </p>
+            <span class="inline-block px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold">SLA: 100% Door Verification</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center space-x-2 text-emerald-700 font-extrabold mb-2">
+              <i class="fa-solid fa-kitchen-set"></i>
+              <span>Kitchen (Executive Chef)</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
+              Utilize the average Turnout Ratio (88%-92%) to forecast daily buffet food preparation. Never prep 100% of system entitlement to prevent excessive food waste.
+            </p>
+            <span class="inline-block px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">SLA: Food Waste &lt; 8%</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center space-x-2 text-rose-700 font-extrabold mb-2">
+              <i class="fa-solid fa-calculator"></i>
+              <span>Finance / Night Audit</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
+              Conduct joint reconciliation at 10:30 AM comparing POS cashier bills, hostess door sheets, and PMS DRR. Daily reconciliation closes no later than 11:30 AM WITA.
+            </p>
+            <span class="inline-block px-2.5 py-1 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold">SLA: Closing at 11:30 AM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL POPUP: POST-BREAKFAST ENTRY FORM (COMP+HU RMS & COMP+HU PAX MANUAL) -->
+  <!-- ========================================================================= -->
+  <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-gradient-to-r from-[#0068a3] to-[#0076b5] text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-inner">
+            <i class="fa-solid fa-clipboard-check text-base"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Post-Breakfast Reconciliation Form (10:00 - 11:00 AM WITA)</h3>
+            <p class="text-[11px] text-blue-100">D-1 Night Audit DRR vs Actual Physical Restaurant Covers</p>
+          </div>
+        </div>
+        <button onclick="closeInputModal()" class="text-white/80 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs">
+        
+        <!-- Date Selector Bar -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <label class="block text-[10.5px] font-extrabold text-slate-500 uppercase tracking-wider mb-0.5">Select Operational Date:</label>
+            <span id="modalDateLabel" class="text-xs text-brand-700 font-black">Loading date...</span>
+          </div>
+          <select id="modalDaySelect" onchange="loadDayDataToModal(this.value)" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm cursor-pointer">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <!-- 1. DRR Data (D-1 Night Audit) - COMP+HU RMS & COMP+HU PAX MANUAL -->
+        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+          <div class="flex items-center space-x-2 text-brand-700 font-black mb-3">
+            <i class="fa-solid fa-hotel"></i>
+            <span class="tracking-wide">1. D-1 NIGHT AUDIT DRR DATA (Previous Night's Stay)</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Occupied Rms (C) <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpOcc" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">RO Rms (D) <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpRO" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Complimentary + House Use Rooms">Comp + HU Rms <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Pax from Complimentary + House Use Rooms (Manual Entry)">Comp + HU Pax <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">In-House Guests <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-2 italic">*Note: Enter Comp + HU data manually as reported in the official Night Audit DRR.</p>
+        </div>
+
+        <!-- 2. System Entitlement / PMS -->
+        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+          <div class="flex items-center space-x-2 text-indigo-700 font-black mb-3">
+            <i class="fa-solid fa-ticket"></i>
+            <span class="tracking-wide">2. PMS SYSTEM ENTITLEMENT (Authorized Entitled Pax)</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">PMS Rate Inclusive Pax (F) - <span class="text-slate-400 font-normal">Paid Packages</span> <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpPMS" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Complimentary &amp; VIP Pax (G) - <span class="text-slate-400 font-normal">Comp Rms + GM Vouchers</span> <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpComp" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Restaurant Physical Count & Dynamic Rates Hint -->
+        <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
+          <div class="flex items-center space-x-2 text-amber-700 font-black mb-3">
+            <i class="fa-solid fa-utensils"></i>
+            <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT (06:00 - 10:00 AM WITA)</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[10.5px] font-extrabold text-amber-800 mb-1">In-House Seated (I) <span class="text-slate-400 font-normal">(Door Log)</span> <span class="text-rose-500">*</span></label>
+              <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-amber-900 font-black font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Extra Adult Walk-in (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
+              <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+            <div>
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Kids Pax 50% (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
+              <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Calculation Preview Card -->
+        <div class="p-4 rounded-2xl bg-slate-100/90 border border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Automated Audit Calculation (Live Preview)</span>
+            <span id="previewAlertBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">Quota Normal</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[10px] text-slate-500 block font-bold">Total Entitled (H)</span>
+              <span id="prevEntitled" class="font-mono font-black text-amber-600 text-sm">0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[10px] text-slate-500 block font-bold">Total Served (L)</span>
+              <span id="prevServed" class="font-mono font-black text-brand-600 text-sm">0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[10px] text-slate-500 block font-bold">Variance (M)</span>
+              <span id="prevVar" class="font-mono font-black text-slate-700 text-sm">0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
+              <span class="text-[10px] text-rose-600 font-extrabold block">Leakage / Over (O)</span>
+              <span id="prevLeakage" class="font-mono font-black text-rose-600 text-sm">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Remarks, Cashier By & Supervisor -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Discrepancy Root Cause (T)</label>
+            <input type="text" id="inpRemarks" placeholder="e.g., Early flight meal box" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
+          </div>
+          <div>
+            <label class="block text-[10.5px] font-bold text-brand-700 mb-1"><i class="fa-solid fa-cash-register mr-1"></i>Cashier By (POS Input)</label>
+            <input type="text" id="inpCashier" placeholder="e.g., Maya / Andi" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-brand-600 shadow-sm transition">
+          </div>
+          <div>
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor on Duty / Verified By (U)</label>
+            <input type="text" id="inpSupervisor" placeholder="e.g., Capt. Hadi / DM Budi" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button onclick="clearSingleDay()" class="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+          Reset Today
+        </button>
+        <div class="flex items-center space-x-2">
+          <button onclick="closeInputModal()" class="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+            Cancel
+          </button>
+          <button onclick="saveModalData()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs shadow-md hover:shadow-lg active:scale-95 transition">
+            Save Reconciliation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // Configurable Dynamic Rates
+    let RATES = {
+      ADULT_WALKIN: 150000,
+      KIDS: 80000,
+      FOOD_COST_PAX: 42000
+    };
+
+    let currentMonth = 11; // November
+    let currentYear = 2026;
+    let daysData = [];
+    let trendChartInstance = null;
+    let compChartInstance = null;
+
+    function getDaysInMonth(year, month) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    function getEnglishDayName(dateStr) {
+      const d = new Date(dateStr);
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return days[d.getDay()];
+    }
+
+    // PURE NUMBER FORMATTING (NO IDR PREFIX)
+    function formatPureNumber(num, decimals = 0) {
+      if (num === null || num === undefined || isNaN(num) || num === 0) return '0';
+      return Math.round(num).toLocaleString('en-US');
+    }
+
+    function formatNum(num, decimals = 0) {
+      if (num === null || num === undefined || isNaN(num)) return '0';
+      return Number(num).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    // Dynamic Live Rate Settings Update
+    function updateRateSettings() {
+      const adult = Number(document.getElementById('cfgRateAdult').value) || 0;
+      const kids = Number(document.getElementById('cfgRateKids').value) || 0;
+      const cost = Number(document.getElementById('cfgRateCost').value) || 0;
+
+      RATES.ADULT_WALKIN = adult;
+      RATES.KIDS = kids;
+      RATES.FOOD_COST_PAX = cost;
+
+      const hintAdult = document.getElementById('lblHintAdult');
+      if (hintAdult) hintAdult.textContent = `(@ ${formatPureNumber(adult)})`;
+      const hintKids = document.getElementById('lblHintKids');
+      if (hintKids) hintKids.textContent = `(@ ${formatPureNumber(kids)})`;
+
+      renderTable();
+    }
+
+    // Clean Blank State Initialization
+    function initMonthData() {
+      const totalDays = getDaysInMonth(currentYear, currentMonth);
+      daysData = [];
+
+      for (let day = 1; day <= totalDays; day++) {
+        const mm = String(currentMonth).padStart(2, '0');
+        const dd = String(day).padStart(2, '0');
+        const dateStr = `${currentYear}-${mm}-${dd}`;
+        const dayName = getEnglishDayName(dateStr);
+
+        daysData.push({
+          dayNum: day,
+          date: dateStr,
+          dayName: dayName,
+          occ: null,
+          ro: null,
+          compRms: null,
+          compPax: null,
+          inh: null,
+          pms: null,
+          comp: null,
+          seated: null,
+          walkin: null,
+          kids: null,
+          remarks: '',
+          cashier: '',
+          supervisor: '',
+          isFilled: false
+        });
+      }
+    }
+
+    // Daily Calculation Engine
+    function computeDayRecord(d) {
+      if (!d.isFilled && d.seated === null && d.pms === null && d.occ === null) {
+        return {
+          ...d,
+          entitled: null,
+          served: null,
+          variance: null,
+          noShow: null,
+          leakage: null,
+          turnout: null,
+          walkinRev: null,
+          leakLoss: null,
+          foodCost: null
+        };
+      }
+
+      const pms = Number(d.pms || 0);
+      const comp = Number(d.comp || 0);
+      const entitled = pms + comp;
+
+      const seated = Number(d.seated || 0);
+      const walkin = Number(d.walkin || 0);
+      const kids = Number(d.kids || 0);
+      const served = seated + walkin + kids;
+
+      const variance = seated - entitled;
+      const noShow = entitled > seated ? (entitled - seated) : 0;
+      const leakage = seated > entitled ? (seated - entitled) : 0;
+
+      const turnout = entitled > 0 ? (seated / entitled) : 0;
+      const walkinRev = (walkin * RATES.ADULT_WALKIN) + (kids * RATES.KIDS);
+      const leakLoss = leakage * RATES.ADULT_WALKIN;
+      const foodCost = served * RATES.FOOD_COST_PAX;
+
+      return {
+        ...d,
+        entitled,
+        served,
+        variance,
+        noShow,
+        leakage,
+        turnout,
+        walkinRev,
+        leakLoss,
+        foodCost
+      };
+    }
+
+    // Render Master Daily Table
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      let filledDaysCount = 0;
+      let leakageCasesCount = 0;
+
+      let sumOcc = 0, sumRO = 0, sumCompRms = 0, sumCompPax = 0, sumInh = 0;
+      let sumPMS = 0, sumComp = 0, sumEntitled = 0;
+      let sumSeated = 0, sumWalkin = 0, sumKids = 0, sumServed = 0;
+      let sumVar = 0, sumNoShow = 0, sumLeakage = 0;
+      let sumRev = 0, sumLoss = 0, sumCost = 0;
+
+      daysData.forEach((item, idx) => {
+        const c = computeDayRecord(item);
+        const tr = document.createElement('tr');
+        
+        const isLeak = c.leakage && c.leakage > 0;
+        if (isLeak) leakageCasesCount++;
+        if (item.isFilled) filledDaysCount++;
+
+        const zebra = idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white';
+        tr.className = `hover:bg-blue-50/80 transition font-mono-num ${item.isFilled ? zebra : 'bg-white/40 text-slate-400'}`;
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-2 text-center border-r border-slate-200 font-bold ${item.isFilled ? 'text-slate-800' : 'text-slate-400'}">${c.date}</td>
+          <td class="py-2.5 px-2 text-center border-r border-slate-200 font-sans ${c.dayName === 'Saturday' || c.dayName === 'Sunday' ? 'text-amber-600 font-extrabold' : 'text-slate-600'}">${c.dayName}</td>
+          
+          <!-- DRR Columns (Comp + HU Rms & Comp + HU Pax) -->
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-800">${c.occ !== null ? formatNum(c.occ) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-600">${c.ro !== null ? formatNum(c.ro) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-brand-700 font-medium">${c.compRms !== null ? formatNum(c.compRms) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-brand-700 font-medium">${c.compPax !== null ? formatNum(c.compPax) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-900 font-bold">${c.inh !== null ? formatNum(c.inh) : '-'}</td>
+
+          <!-- Entitlement Columns -->
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-indigo-700 font-medium">${c.pms !== null ? formatNum(c.pms) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-indigo-700 font-medium">${c.comp !== null ? formatNum(c.comp) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${c.entitled !== null ? 'text-amber-800 bg-amber-50' : ''}">${c.entitled !== null ? formatNum(c.entitled) : '-'}</td>
+
+          <!-- Resto Count Columns -->
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${c.seated !== null ? 'text-amber-700 bg-amber-50/60' : ''}">${c.seated !== null ? formatNum(c.seated) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-700">${c.walkin !== null ? formatNum(c.walkin) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-700">${c.kids !== null ? formatNum(c.kids) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${c.served !== null ? 'text-brand-700 bg-blue-50/70' : ''}">${c.served !== null ? formatNum(c.served) : '-'}</td>
+
+          <!-- Audit Variance Columns -->
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 ${c.variance !== null && c.variance < 0 ? 'text-slate-500' : c.variance > 0 ? 'text-rose-600 font-black' : ''}">${c.variance !== null ? (c.variance > 0 ? '+' + c.variance : c.variance) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-500">${c.noShow !== null ? formatNum(c.noShow) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'bg-rose-100 text-rose-700 animate-pulse' : ''}">${c.leakage !== null ? (c.leakage > 0 ? c.leakage : 0) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-amber-700 font-bold">${c.turnout !== null ? (c.turnout * 100).toFixed(1) + '%' : '-'}</td>
+
+          <!-- Financial Columns (Pure Numbers, NO IDR Text) -->
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-emerald-700 font-bold">${c.walkinRev !== null ? formatPureNumber(c.walkinRev) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'text-rose-600' : 'text-slate-400'}">${c.leakLoss !== null ? formatPureNumber(c.leakLoss) : '-'}</td>
+          <td class="py-2.5 px-2 text-right border-r border-slate-200 text-slate-700 font-medium">${c.foodCost !== null ? formatPureNumber(c.foodCost) : '-'}</td>
+
+          <!-- Remarks, Cashier & Supervisor PIC -->
+          <td class="py-2.5 px-2 border-r border-slate-200 font-sans text-left truncate max-w-[130px] text-slate-600" title="${c.remarks || ''}">${c.remarks || '-'}</td>
+          <td class="py-2.5 px-2 border-r border-slate-200 font-sans text-center text-brand-700 font-semibold truncate max-w-[85px] bg-blue-50/40">${c.cashier || '-'}</td>
+          <td class="py-2.5 px-2 border-r border-slate-200 font-sans text-center text-slate-500 truncate max-w-[85px]">${c.supervisor || '-'}</td>
+          <td class="py-2.5 px-2 text-center no-print">
+            <button onclick="openInputModalForDay(${c.dayNum})" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-brand-600 hover:text-white text-slate-700 text-[10px] font-sans font-bold border border-slate-200 transition shadow-sm" title="Entry / Edit Today">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        if (item.isFilled) {
+          sumOcc += Number(c.occ || 0);
+          sumRO += Number(c.ro || 0);
+          sumCompRms += Number(c.compRms || 0);
+          sumCompPax += Number(c.compPax || 0);
+          sumInh += Number(c.inh || 0);
+          sumPMS += Number(c.pms || 0);
+          sumComp += Number(c.comp || 0);
+          sumEntitled += Number(c.entitled || 0);
+          sumSeated += Number(c.seated || 0);
+          sumWalkin += Number(c.walkin || 0);
+          sumKids += Number(c.kids || 0);
+          sumServed += Number(c.served || 0);
+          sumVar += Number(c.variance || 0);
+          sumNoShow += Number(c.noShow || 0);
+          sumLeakage += Number(c.leakage || 0);
+          sumRev += Number(c.walkinRev || 0);
+          sumLoss += Number(c.leakLoss || 0);
+          sumCost += Number(c.foodCost || 0);
+        }
+      });
+
+      // Update Info Bar
+      document.getElementById('filledCount').textContent = filledDaysCount;
+      document.getElementById('totalDaysCount').textContent = daysData.length;
+      document.getElementById('leakageDetectedCount').textContent = leakageCasesCount + ' Cases';
+
+      // Update TFoot MTD Total (Pure Numbers)
+      document.getElementById('totDaysLabel').textContent = filledDaysCount + ' Days';
+      document.getElementById('totOcc').textContent = formatNum(sumOcc);
+      document.getElementById('totRO').textContent = formatNum(sumRO);
+      document.getElementById('totCompRms').textContent = formatNum(sumCompRms);
+      document.getElementById('totCompPax').textContent = formatNum(sumCompPax);
+      document.getElementById('totInh').textContent = formatNum(sumInh);
+      document.getElementById('totPMS').textContent = formatNum(sumPMS);
+      document.getElementById('totComp').textContent = formatNum(sumComp);
+      document.getElementById('totEntitled').textContent = formatNum(sumEntitled);
+      document.getElementById('totSeated').textContent = formatNum(sumSeated);
+      document.getElementById('totWalkin').textContent = formatNum(sumWalkin);
+      document.getElementById('totKids').textContent = formatNum(sumKids);
+      document.getElementById('totServed').textContent = formatNum(sumServed);
+      document.getElementById('totVar').textContent = (sumVar > 0 ? '+' : '') + formatNum(sumVar);
+      document.getElementById('totNoShow').textContent = formatNum(sumNoShow);
+      document.getElementById('totLeakage').textContent = formatNum(sumLeakage);
+      const avgTurnoutMTD = filledDaysCount > 0 ? (sumSeated / (sumEntitled || 1)) * 100 : 0;
+      document.getElementById('totTurnout').textContent = avgTurnoutMTD.toFixed(1) + '%';
+      document.getElementById('totRev').textContent = formatPureNumber(sumRev);
+      document.getElementById('totLoss').textContent = formatPureNumber(sumLoss);
+      document.getElementById('totCost').textContent = formatPureNumber(sumCost);
+
+      // Update TFoot Daily Average (Pure Numbers)
+      const divisor = filledDaysCount > 0 ? filledDaysCount : 1;
+      document.getElementById('avgOcc').textContent = formatNum(sumOcc / divisor, 1);
+      document.getElementById('avgRO').textContent = formatNum(sumRO / divisor, 1);
+      document.getElementById('avgCompRms').textContent = formatNum(sumCompRms / divisor, 1);
+      document.getElementById('avgCompPax').textContent = formatNum(sumCompPax / divisor, 1);
+      document.getElementById('avgInh').textContent = formatNum(sumInh / divisor, 1);
+      document.getElementById('avgPMS').textContent = formatNum(sumPMS / divisor, 1);
+      document.getElementById('avgComp').textContent = formatNum(sumComp / divisor, 1);
+      document.getElementById('avgEntitled').textContent = formatNum(sumEntitled / divisor, 1);
+      document.getElementById('avgSeated').textContent = formatNum(sumSeated / divisor, 1);
+      document.getElementById('avgWalkin').textContent = formatNum(sumWalkin / divisor, 1);
+      document.getElementById('avgKids').textContent = formatNum(sumKids / divisor, 1);
+      document.getElementById('avgServed').textContent = formatNum(sumServed / divisor, 1);
+      document.getElementById('avgVar').textContent = formatNum(sumVar / divisor, 1);
+      document.getElementById('avgNoShow').textContent = formatNum(sumNoShow / divisor, 1);
+      document.getElementById('avgLeakage').textContent = formatNum(sumLeakage / divisor, 1);
+      document.getElementById('avgTurnout').textContent = avgTurnoutMTD.toFixed(1) + '%';
+      document.getElementById('avgRev').textContent = formatPureNumber(sumRev / divisor);
+      document.getElementById('avgLoss').textContent = formatPureNumber(sumLoss / divisor);
+      document.getElementById('avgCost').textContent = formatPureNumber(sumCost / divisor);
+
+      // Synchronize with Executive Summary Tab
+      updateDashboardData({
+        filledDaysCount,
+        sumServed,
+        avgTurnoutMTD,
+        sumRev,
+        sumNoShow,
+        sumLeakage,
+        sumLoss,
+        sumOcc,
+        sumRO,
+        sumCompRms,
+        sumCompPax,
+        sumInh,
+        sumPMS,
+        sumComp,
+        sumEntitled,
+        sumSeated,
+        sumWalkin,
+        sumKids,
+        sumCost,
+        divisor
+      });
+    }
+
+    // Update Executive Summary Dashboard
+    function updateDashboardData(data) {
+      document.getElementById('cardTotalServed').textContent = formatNum(data.sumServed);
+      document.getElementById('cardTurnoutRatio').textContent = data.avgTurnoutMTD.toFixed(1) + '%';
+      document.getElementById('cardExtraRevenue').textContent = formatPureNumber(data.sumRev);
+      document.getElementById('cardTotalNoShow').textContent = formatNum(data.sumNoShow);
+      document.getElementById('cardTotalLeakage').textContent = formatNum(data.sumLeakage);
+      document.getElementById('cardLossExposure').textContent = formatPureNumber(data.sumLoss);
+
+      const summaryTbody = document.getElementById('auditSummaryTbody');
+      summaryTbody.innerHTML = `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">Occupied Rooms (D-1 DRR)</td>
+          <td class="py-2.5 px-3 text-slate-500">PMS Night Audit</td>
+          <td class="py-2.5 px-3 text-right text-brand-700 font-bold">${formatNum(data.sumOcc)} Rms</td>
+          <td class="py-2.5 px-3 text-right text-slate-700">${formatNum(data.sumOcc / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">Occupancy 65%-85%</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Total occupied hotel rooms from previous night.</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-brand-700">Complimentary &amp; House Use (HU) Rooms &amp; Pax</td>
+          <td class="py-2.5 px-3 text-slate-500">DRR Comp + HU Category</td>
+          <td class="py-2.5 px-3 text-right text-brand-700 font-bold">${formatNum(data.sumCompRms)} Rms / ${formatNum(data.sumCompPax)} Pax</td>
+          <td class="py-2.5 px-3 text-right text-brand-700">${formatNum(data.sumCompPax / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">Max 2%-3% Occ</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Hotel complimentary &amp; house use rooms (Owner/GM/Media/Staff).</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">In-House Guests Stayed</td>
+          <td class="py-2.5 px-3 text-slate-500">PMS Guest Count</td>
+          <td class="py-2.5 px-3 text-right text-slate-900 font-black">${formatNum(data.sumInh)} Pax</td>
+          <td class="py-2.5 px-3 text-right text-slate-800">${formatNum(data.sumInh / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">1.6 - 1.9 Guests/Rm</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Double occupancy density ratio per room.</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-amber-700">Total System Entitled Pax (H)</td>
+          <td class="py-2.5 px-3 text-slate-500">PMS Rate Incl + Comp (F+G)</td>
+          <td class="py-2.5 px-3 text-right text-amber-700 font-black">${formatNum(data.sumEntitled)} Pax</td>
+          <td class="py-2.5 px-3 text-right text-amber-700">${formatNum(data.sumEntitled / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">100% Authorized</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Total authorized portions entitled to breakfast without bill.</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-amber-800">In-House Seated Physical (I)</td>
+          <td class="py-2.5 px-3 text-slate-500">Door Greeter Checklist</td>
+          <td class="py-2.5 px-3 text-right text-amber-800 font-black">${formatNum(data.sumSeated)} Pax</td>
+          <td class="py-2.5 px-3 text-right text-amber-800">${formatNum(data.sumSeated / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">Show-Up 88%-92%</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Actual in-house package diners verified at the door.</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-rose-600">Unbilled Leakage / Over-Pax (O)</td>
+          <td class="py-2.5 px-3 text-slate-500">=IF(Seated &gt; Entitled, I-H, 0)</td>
+          <td class="py-2.5 px-3 text-right text-rose-600 font-black">${formatNum(data.sumLeakage)} Pax</td>
+          <td class="py-2.5 px-3 text-right text-rose-600">${formatNum(data.sumLeakage / data.divisor, 1)}</td>
+          <td class="py-2.5 px-3 text-center text-rose-600 font-bold">Target: 0 Cases</td>
+          <td class="py-2.5 px-3 font-sans text-rose-600 font-bold">Guests dining without quota/billing. Mandatory FO post-charge!</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-emerald-700">Direct Extra Walk-in Revenue (Q)</td>
+          <td class="py-2.5 px-3 text-slate-500">POS Bill Extra Adult + Kids</td>
+          <td class="py-2.5 px-3 text-right text-emerald-700 font-black">${formatPureNumber(data.sumRev)}</td>
+          <td class="py-2.5 px-3 text-right text-emerald-700">${formatPureNumber(data.sumRev / data.divisor)}</td>
+          <td class="py-2.5 px-3 text-center text-emerald-700 font-bold">Incremental P&amp;L</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Direct cashier income from extra diners at the restaurant.</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-700">Estimated Total Food Cost (S)</td>
+          <td class="py-2.5 px-3 text-slate-500">=Served Covers * Standard Cost</td>
+          <td class="py-2.5 px-3 text-right text-slate-800 font-bold">${formatPureNumber(data.sumCost)}</td>
+          <td class="py-2.5 px-3 text-right text-slate-700">${formatPureNumber(data.sumCost / data.divisor)}</td>
+          <td class="py-2.5 px-3 text-center text-slate-500">Standard Budget</td>
+          <td class="py-2.5 px-3 font-sans text-slate-600">Allocated buffet raw food cost issued by the kitchen.</td>
+        </tr>
+      `;
+
+      const totalPax = (data.sumSeated + data.sumWalkin + data.sumKids) || 1;
+      const pctInh = ((data.sumSeated / totalPax) * 100).toFixed(1);
+      const pctAdult = ((data.sumWalkin / totalPax) * 100).toFixed(1);
+      const pctKids = ((data.sumKids / totalPax) * 100).toFixed(1);
+
+      document.getElementById('pieInhouseVal').textContent = pctInh + '%';
+      document.getElementById('pieAdultVal').textContent = pctAdult + '%';
+      document.getElementById('pieKidsVal').textContent = pctKids + '%';
+
+      renderCharts(data);
+    }
+
+    Chart.register(ChartDataLabels);
+
+    // Render Chart.js with Direct Numbers Styled by Dataset Color
+    function renderCharts(data) {
+      const labels = daysData.map(d => 'Day ' + d.dayNum);
+      
+      const entitledSeries = daysData.map(d => {
+        if (!d.isFilled) return null;
+        const c = computeDayRecord(d);
+        return c.entitled;
+      });
+      const servedSeries = daysData.map(d => {
+        if (!d.isFilled) return null;
+        const c = computeDayRecord(d);
+        return c.served;
+      });
+      const leakageSeries = daysData.map(d => {
+        if (!d.isFilled) return null;
+        const c = computeDayRecord(d);
+        return (c.leakage && c.leakage > 0) ? c.leakage : null;
+      });
+
+      const ctxTrend = document.getElementById('trendChart').getContext('2d');
+      if (trendChartInstance) trendChartInstance.destroy();
+
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Actual Covers Served (L)',
+              data: servedSeries,
+              borderColor: '#0076b5',
+              backgroundColor: 'rgba(0, 118, 181, 0.08)',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#0076b5',
+              pointRadius: 4,
+              tension: 0.3,
+              fill: true,
+              datalabels: {
+                color: '#0076b5',
+                align: 'top',
+                anchor: 'start',
+                offset: 4,
+                font: {
+                  family: 'JetBrains Mono',
+                  weight: 'bold',
+                  size: 9.5
+                },
+                formatter: function(value) {
+                  return value !== null && value !== undefined ? value : '';
+                }
+              }
+            },
+            {
+              label: 'PMS Entitled Quota (H)',
+              data: entitledSeries,
+              borderColor: '#d97706',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointBackgroundColor: '#d97706',
+              pointRadius: 3.5,
+              tension: 0.3,
+              fill: false,
+              datalabels: {
+                color: '#d97706',
+                align: 'bottom',
+                anchor: 'end',
+                offset: 4,
+                font: {
+                  family: 'JetBrains Mono',
+                  weight: 'bold',
+                  size: 9.5
+                },
+                formatter: function(value) {
+                  return value !== null && value !== undefined ? value : '';
+                }
+              }
+            },
+            {
+              label: 'Leakage / Over-Pax (O)',
+              data: leakageSeries,
+              borderColor: '#e11d48',
+              backgroundColor: '#e11d48',
+              type: 'bar',
+              barThickness: 8,
+              datalabels: {
+                color: '#e11d48',
+                align: 'top',
+                anchor: 'end',
+                offset: 2,
+                font: {
+                  family: 'JetBrains Mono',
+                  weight: 'bold',
+                  size: 10
+                },
+                formatter: function(value) {
+                  return (value && value > 0) ? value : '';
+                }
+              }
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 24,
+              bottom: 8
+            }
+          },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { 
+              labels: { 
+                color: '#334155', 
+                font: { family: 'Plus Jakarta Sans', size: 10.5, weight: 'bold' } 
+              } 
+            },
+            tooltip: {
+              enabled: true
+            }
+          },
+          scales: {
+            x: { 
+              grid: { color: 'rgba(0,0,0,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 9.5 } } 
+            },
+            y: { 
+              grid: { color: 'rgba(0,0,0,0.04)' }, 
+              ticks: { color: '#64748b', font: { size: 10 } },
+              suggestedMax: 100
+            }
+          }
+        }
+      });
+
+      // Composition Doughnut
+      const ctxComp = document.getElementById('compositionChart').getContext('2d');
+      if (compChartInstance) compChartInstance.destroy();
+
+      compChartInstance = new Chart(ctxComp, {
+        type: 'doughnut',
+        data: {
+          labels: ['In-House Seated', 'Extra Adult', 'Kids Pax'],
+          datasets: [{
+            data: [data.sumSeated || 1, data.sumWalkin || 0, data.sumKids || 0],
+            backgroundColor: ['#0076b5', '#10b981', '#f59e0b'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { display: false },
+            datalabels: {
+              color: '#ffffff',
+              font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 11 },
+              formatter: function(value, context) {
+                if (data.sumServed <= 0) return '';
+                const pct = ((value / data.sumServed) * 100).toFixed(0);
+                return pct > 5 ? pct + '%' : '';
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    // Modal Control & Form Handling
+    function openInputModal() {
+      const today = new Date();
+      let selectDay = 1;
+      if (today.getMonth() + 1 === currentMonth && today.getFullYear() === currentYear) {
+        selectDay = today.getDate();
+      }
+
+      populateModalDayOptions();
+      loadDayDataToModal(selectDay);
+      document.getElementById('inputModal').classList.remove('hidden');
+    }
+
+    function openInputModalForDay(dayNum) {
+      populateModalDayOptions();
+      loadDayDataToModal(dayNum);
+      document.getElementById('inputModal').classList.remove('hidden');
+    }
+
+    function closeInputModal() {
+      document.getElementById('inputModal').classList.add('hidden');
+    }
+
+    function populateModalDayOptions() {
+      const select = document.getElementById('modalDaySelect');
+      select.innerHTML = '';
+      daysData.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.dayNum;
+        opt.textContent = `Day ${d.dayNum} (${d.dayName}) ${d.isFilled ? '✓' : ''}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function loadDayDataToModal(dayNum) {
+      document.getElementById('modalDaySelect').value = dayNum;
+      const d = daysData.find(item => item.dayNum == dayNum);
+      if (!d) return;
+
+      document.getElementById('modalDateLabel').textContent = `${d.dayName}, ${getMonthName(currentMonth)} ${d.dayNum}, ${currentYear}`;
+
+      document.getElementById('inpOcc').value = d.occ !== null ? d.occ : '';
+      document.getElementById('inpRO').value = d.ro !== null ? d.ro : '';
+      document.getElementById('inpCompRms').value = d.compRms !== null ? d.compRms : '';
+      document.getElementById('inpCompPax').value = d.compPax !== null ? d.compPax : '';
+      document.getElementById('inpInh').value = d.inh !== null ? d.inh : '';
+      
+      document.getElementById('inpPMS').value = d.pms !== null ? d.pms : '';
+      document.getElementById('inpComp').value = d.comp !== null ? d.comp : '';
+      
+      document.getElementById('inpSeated').value = d.seated !== null ? d.seated : '';
+      document.getElementById('inpWalkin').value = d.walkin !== null ? d.walkin : '';
+      document.getElementById('inpKids').value = d.kids !== null ? d.kids : '';
+      
+      document.getElementById('inpRemarks').value = d.remarks || '';
+      document.getElementById('inpCashier').value = d.cashier || '';
+      document.getElementById('inpSupervisor').value = d.supervisor || 'Captain On Duty';
+
+      // Update rate hints in modal
+      const hintAdult = document.getElementById('lblHintAdult');
+      if (hintAdult) hintAdult.textContent = `(@ ${formatPureNumber(RATES.ADULT_WALKIN)})`;
+      const hintKids = document.getElementById('lblHintKids');
+      if (hintKids) hintKids.textContent = `(@ ${formatPureNumber(RATES.KIDS)})`;
+
+      recalcModalPreview();
+    }
+
+    // RECALCULATE PREVIEW WITHOUT AUTO-OVERRIDING COMP PAX INTO ENTITLED G
+    function recalcModalPreview() {
+      const pms = Number(document.getElementById('inpPMS').value || 0);
+      const comp = Number(document.getElementById('inpComp').value || 0);
+      const entitled = pms + comp;
+
+      const seated = Number(document.getElementById('inpSeated').value || 0);
+      const walkin = Number(document.getElementById('inpWalkin').value || 0);
+      const kids = Number(document.getElementById('inpKids').value || 0);
+      const served = seated + walkin + kids;
+
+      const variance = seated - entitled;
+      const leakage = seated > entitled ? (seated - entitled) : 0;
+
+      document.getElementById('prevEntitled').textContent = entitled;
+      document.getElementById('prevServed').textContent = served;
+      document.getElementById('prevVar').textContent = (variance > 0 ? '+' : '') + variance;
+      document.getElementById('prevLeakage').textContent = leakage;
+
+      const badge = document.getElementById('previewAlertBadge');
+      if (leakage > 0) {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse';
+        badge.textContent = `ALERT: Leakage of ${leakage} Pax Detected!`;
+      } else {
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
+        badge.textContent = 'Quota Status Normal';
+      }
+    }
+
+    function saveModalData() {
+      const dayNum = Number(document.getElementById('modalDaySelect').value);
+      const idx = daysData.findIndex(item => item.dayNum === dayNum);
+      if (idx === -1) return;
+
+      const occVal = document.getElementById('inpOcc').value;
+      const roVal = document.getElementById('inpRO').value;
+      const compRmsVal = document.getElementById('inpCompRms').value;
+      const compPaxVal = document.getElementById('inpCompPax').value;
+      const inhVal = document.getElementById('inpInh').value;
+
+      const pmsVal = document.getElementById('inpPMS').value;
+      const compVal = document.getElementById('inpComp').value;
+
+      const seatedVal = document.getElementById('inpSeated').value;
+      const walkinVal = document.getElementById('inpWalkin').value;
+      const kidsVal = document.getElementById('inpKids').value;
+
+      daysData[idx].occ = occVal !== '' ? Number(occVal) : 0;
+      daysData[idx].ro = roVal !== '' ? Number(roVal) : 0;
+      daysData[idx].compRms = compRmsVal !== '' ? Number(compRmsVal) : 0;
+      daysData[idx].compPax = compPaxVal !== '' ? Number(compPaxVal) : 0;
+      daysData[idx].inh = inhVal !== '' ? Number(inhVal) : 0;
+
+      daysData[idx].pms = pmsVal !== '' ? Number(pmsVal) : 0;
+      daysData[idx].comp = compVal !== '' ? Number(compVal) : 0;
+
+      daysData[idx].seated = seatedVal !== '' ? Number(seatedVal) : 0;
+      daysData[idx].walkin = walkinVal !== '' ? Number(walkinVal) : 0;
+      daysData[idx].kids = kidsVal !== '' ? Number(kidsVal) : 0;
+
+      daysData[idx].remarks = document.getElementById('inpRemarks').value;
+      daysData[idx].cashier = document.getElementById('inpCashier').value;
+      daysData[idx].supervisor = document.getElementById('inpSupervisor').value;
+      daysData[idx].isFilled = true;
+
+      closeInputModal();
+      renderTable();
+    }
+
+    function clearSingleDay() {
+      const dayNum = Number(document.getElementById('modalDaySelect').value);
+      const idx = daysData.findIndex(item => item.dayNum === dayNum);
+      if (idx === -1) return;
+
+      daysData[idx].occ = null;
+      daysData[idx].ro = null;
+      daysData[idx].compRms = null;
+      daysData[idx].compPax = null;
+      daysData[idx].inh = null;
+      daysData[idx].pms = null;
+      daysData[idx].comp = null;
+      daysData[idx].seated = null;
+      daysData[idx].walkin = null;
+      daysData[idx].kids = null;
+      daysData[idx].remarks = '';
+      daysData[idx].cashier = '';
+      daysData[idx].supervisor = '';
+      daysData[idx].isFilled = false;
+
+      loadDayDataToModal(dayNum);
+      renderTable();
+    }
+
+    function switchTab(tabId) {
+      document.getElementById('tabContent-daily').classList.add('hidden');
+      document.getElementById('tabContent-dashboard').classList.add('hidden');
+
+      document.getElementById('tabBtn-daily').className = 'px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition';
+      document.getElementById('tabBtn-dashboard').className = 'px-4 py-1.5 rounded-lg text-slate-600 hover:text-brand-700 hover:bg-white/80 transition';
+
+      document.getElementById(`tabContent-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tabBtn-${tabId}`).className = 'px-4 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm';
+
+      if (tabId === 'dashboard') {
+        renderTable();
+      }
+    }
+
+    function changePeriod() {
+      currentMonth = Number(document.getElementById('selMonth').value);
+      currentYear = Number(document.getElementById('selYear').value);
+      document.getElementById('periodBadge').textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+      initMonthData();
+      renderTable();
+    }
+
+    function getMonthName(m) {
+      const names = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      return names[m];
+    }
+
+    function exportCSV() {
+      let csv = 'Date,Day,Occupied Rooms,RO Rooms,Comp + HU Rooms,Comp + HU Pax,In-House Guests,PMS Incl,Comp VIP,Total Entitled,In-House Seated,Extra Adult,Kids,Total Served,Variance,No-Show,Leakage Over-Pax,Turnout Ratio,Walk-in Revenue,Leakage Loss,Est Food Cost,Remarks,Cashier,Supervisor\n';
+
+      daysData.forEach(d => {
+        const c = computeDayRecord(d);
+        csv += `"${c.date}","${c.dayName}","${c.occ || 0}","${c.ro || 0}","${c.compRms || 0}","${c.compPax || 0}","${c.inh || 0}","${c.pms || 0}","${c.comp || 0}","${c.entitled || 0}","${c.seated || 0}","${c.walkin || 0}","${c.kids || 0}","${c.served || 0}","${c.variance || 0}","${c.noShow || 0}","${c.leakage || 0}","${(c.turnout * 100 || 0).toFixed(1)}%","${c.walkinRev || 0}","${c.leakLoss || 0}","${c.foodCost || 0}","${c.remarks || ''}","${c.cashier || ''}","${c.supervisor || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `PHB_Breakfast_Reconciliation_${currentMonth}_${currentYear}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('selMonth').value = currentMonth;
+      document.getElementById('selYear').value = currentYear;
+      document.getElementById('periodBadge').textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+      initMonthData();
+      updateRateSettings();
+    });
+  </script>
+</body>
+</html>
