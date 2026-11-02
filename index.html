@@ -93,6 +93,12 @@
 
       <!-- Quick Action Controls -->
       <div class="flex items-center space-x-2.5">
+        <!-- Panduan Kolom Button for Staff -->
+        <button onclick="openGuideModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs flex items-center space-x-1.5 shadow-md active:scale-95 transition">
+          <i class="fa-solid fa-circle-question text-sm"></i>
+          <span>Panduan Kolom</span>
+        </button>
+        <!-- Post Breakfast Entry Button -->
         <button id="btnOpenInputModal" onclick="openInputModal()" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-brand-700 font-extrabold text-xs flex items-center space-x-2 shadow-md hover:shadow-lg active:scale-95 transition-all border border-white/80">
           <i class="fa-solid fa-plus-circle text-brand-600 text-sm"></i>
           <span>+ Post-Breakfast Entry</span>
@@ -194,7 +200,7 @@
     <!-- ========================================================================= -->
     <div id="tabContent-daily" class="space-y-4">
       
-      <!-- Status Card -->
+      <!-- Status Card with Quick Help Link -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center space-x-3.5">
           <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-base shadow-sm">
@@ -212,8 +218,13 @@
           </div>
         </div>
 
-        <div class="text-xs text-slate-500 font-medium">
-          <span class="text-rose-600 font-bold">*Formula Update:</span> Potential Loss Exposure = <span class="font-mono font-bold text-slate-700">Leakage (Over-Pax) × Breakfast Allocation</span>
+        <div class="flex items-center space-x-3 text-xs">
+          <button onclick="openGuideModal()" class="text-brand-700 font-bold hover:underline flex items-center gap-1 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-200">
+            <i class="fa-solid fa-book-open"></i> Pelajari Arti Kolom &amp; Rumus
+          </button>
+          <div class="text-slate-500 font-medium hidden sm:block">
+            <span class="text-rose-600 font-bold">*Formula:</span> Loss = <span class="font-mono font-bold text-slate-700">Leakage × Breakfast Allocation</span>
+          </div>
         </div>
       </div>
 
@@ -221,7 +232,6 @@
       <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto">
         <table class="w-full text-[11px] border-collapse" id="reconcileTable">
           <thead>
-            <!-- Category Super-Header Row -->
             <tr class="bg-slate-100 border-b border-slate-200 text-[10px] uppercase font-extrabold tracking-wider text-center select-none">
               <th colspan="2" class="py-2.5 px-2 border-r border-slate-200 text-slate-600 bg-slate-100">AUTO CALENDAR</th>
               <th colspan="5" class="py-2.5 px-2 border-r border-slate-200 text-brand-700 bg-blue-50/70">D-1 DRR (NIGHT AUDIT)</th>
@@ -231,119 +241,96 @@
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-emerald-800 bg-emerald-50/70">FINANCIAL &amp; COST CONTROL</th>
               <th colspan="4" class="py-2.5 px-2 text-slate-600 bg-slate-100">AUDIT, CASHIER &amp; ACTION</th>
             </tr>
-            <!-- Column Name Sub-Header Row -->
             <tr class="bg-[#0076b5] text-white font-extrabold border-b border-brand-800 text-center select-none text-[10.5px]">
               <th class="py-2.5 px-2 border-r border-brand-700 w-24">Date (A)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 w-20">Day (B)</th>
               
-              <!-- DRR Data Columns -->
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Total Occupied Rooms from D-1 DRR">Occ Rms (C)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Room Only Rooms (No Breakfast)">RO Rms (D)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Complimentary + House Use (HU) Rooms">Comp + HU Rms</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Pax from Complimentary + House Use Rooms">Comp + HU Pax</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/80 font-black" title="Total Physical In-House Guests">In-House Guests (E)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Total Kamar Terisi (DRR)">Occ Rms (C)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Kamar Tanpa Breakfast">RO Rms (D)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Kamar Complimentary + House Use">Comp + HU Rms</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/60" title="Pax Kamar Complimentary + House Use">Comp + HU Pax</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-700/80 font-black" title="Semua Tamu yang Tidur di Kamar Hotel">In-House Guests (E)</th>
 
-              <!-- Entitlement System Columns -->
-              <th class="py-2.5 px-2 border-r border-brand-700" title="Rate Inclusive Breakfast (Paid Packages)">PMS Incl (F)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700" title="Comp Room Pax + GM Authorized Vouchers">Comp/VIP (G)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/30 text-amber-100 font-black" title="Total Authorized Entitlement = F + G">Entitled (H)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Jatah Sarapan Kamar Berbayar">PMS Incl (F)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Jatah Sarapan Tamu Comp/VIP/Voucher">Comp/VIP (G)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/30 text-amber-100 font-black" title="Total Jatah Sah Masuk Resto = F + G">Entitled (H)</th>
 
-              <!-- Resto Count Columns -->
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/40 text-amber-50 font-black" title="Actual In-House Diners Seated (Door Greeter Log)">In-House Seated (I)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700" title="Paid Extra / Walk-in Adults">Extra Pax (J)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700" title="Children (50% Rate)">Kids (K)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-800 text-white font-black" title="Total Actual Physical Covers Served = I + J + K">Served (L)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/40 text-amber-50 font-black" title="Tamu Kamar yang Riil Duduk Makan (Checklist Pintu)">In-House Seated (I)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Tamu Dewasa Beli Tambahan/Walk-in">Extra Pax (J)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Anak-anak Beli Tambahan 50%">Kids (K)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-800 text-white font-black" title="Total Fisik Piring Keluar = I + J + K">Served (L)</th>
 
-              <!-- Audit Variance Columns -->
-              <th class="py-2.5 px-2 border-r border-brand-700" title="In-House Variance = I - H">Variance (M)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-blue-100" title="Entitled Guests Who Skipped Breakfast">No-Show (N)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Unbilled Over-Pax Admitted (LEAKAGE)">Leakage (O)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Turnout Ratio % = I / H">Turnout (P)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700" title="Selisih Tamu Duduk vs Jatah = I - H">Variance (M)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-blue-100" title="Tamu Berhak Sarapan yang Tidak Datang">No-Show (N)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Tamu Masuk Tanpa Jatah / Bocor">Leakage (O)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Persentase Kehadiran = I / H">Turnout (P)</th>
 
-              <!-- Financial Estimations -->
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Custom Breakfast Room Allocation per Pax (Rp)">Breakfast Allocation (Rp)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Extra POS Sales = (J*RateAdult) + (K*RateKids)">Walk-in Rev (Q)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = Leakage (O) * Breakfast Allocation">Leak Loss (R)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 text-slate-100" title="Estimated Buffet Food Cost = L * RateCost">Food Cost (S)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Nilai Alokasi Sarapan Kamar per Pax">Breakfast Allocation (Rp)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Pendapatan Kasir POS Sarapan">Walk-in Rev (Q)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Potensi Kerugian = Leakage * Breakfast Allocation">Leak Loss (R)</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 text-slate-100" title="Estimasi Biaya Makanan Buffet Dapur">Food Cost (S)</th>
 
-              <!-- Remarks, Cashier, Supervisor & Action -->
               <th class="py-2.5 px-2 border-r border-brand-700 w-36 text-left">Remarks / Root Cause (T)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 w-24 text-center bg-blue-700/50" title="Cashier on Duty / Transaction Input by">Cashier By</th>
+              <th class="py-2.5 px-2 border-r border-brand-700 w-24 text-center bg-blue-700/50">Cashier By</th>
               <th class="py-2.5 px-2 border-r border-brand-700 w-24">Supervisor (U)</th>
               <th class="py-2.5 px-2 w-14 no-print">Action</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-200 font-mono-num text-[11px] text-slate-700">
-            <!-- Rendered via JS -->
+            <!-- Dynamically rendered via JS -->
           </tbody>
           <tfoot class="bg-slate-900 border-t-2 border-brand-600 font-bold font-mono-num text-white shadow-lg">
-            <!-- MTD Total Row -->
             <tr id="rowTotalMTD" class="border-b border-slate-800 bg-slate-900">
               <td class="py-2.5 px-2 text-center text-amber-400 font-sans font-black">TOTAL MTD</td>
               <td id="totDaysLabel" class="py-2.5 px-2 text-center text-slate-300 font-sans">0 Days</td>
-              
               <td id="totOcc" class="py-2.5 px-2 text-right text-sky-300">0</td>
               <td id="totRO" class="py-2.5 px-2 text-right text-sky-300">0</td>
               <td id="totCompRms" class="py-2.5 px-2 text-right text-sky-300">0</td>
               <td id="totCompPax" class="py-2.5 px-2 text-right text-sky-300">0</td>
               <td id="totInh" class="py-2.5 px-2 text-right text-sky-200 font-black">0</td>
-
               <td id="totPMS" class="py-2.5 px-2 text-right text-indigo-300">0</td>
               <td id="totComp" class="py-2.5 px-2 text-right text-indigo-300">0</td>
               <td id="totEntitled" class="py-2.5 px-2 text-right text-amber-400 font-black bg-slate-800/60">0</td>
-
               <td id="totSeated" class="py-2.5 px-2 text-right text-amber-300 font-black bg-slate-800/80">0</td>
               <td id="totWalkin" class="py-2.5 px-2 text-right">0</td>
               <td id="totKids" class="py-2.5 px-2 text-right">0</td>
               <td id="totServed" class="py-2.5 px-2 text-right text-sky-400 font-black bg-slate-800">0</td>
-
               <td id="totVar" class="py-2.5 px-2 text-right">0</td>
               <td id="totNoShow" class="py-2.5 px-2 text-right text-slate-400">0</td>
               <td id="totLeakage" class="py-2.5 px-2 text-right text-rose-400 font-black bg-rose-950/60">0</td>
               <td id="totTurnout" class="py-2.5 px-2 text-right text-amber-400">0.0%</td>
-
-              <!-- Breakfast Allocation Total -->
               <td id="totAlloc" class="py-2.5 px-2 text-right text-amber-300">-</td>
               <td id="totRev" class="py-2.5 px-2 text-right text-emerald-400 font-black">0</td>
               <td id="totLoss" class="py-2.5 px-2 text-right text-rose-400 font-black">0</td>
               <td id="totCost" class="py-2.5 px-2 text-right text-slate-300">0</td>
-
               <td class="py-2.5 px-2 text-slate-300 font-sans text-xs">Closed Reconciliation</td>
               <td class="py-2.5 px-2 text-center text-slate-300 font-sans text-xs">POS Cashier</td>
               <td class="py-2.5 px-2 text-center text-slate-300 font-sans text-xs">FBM Audit</td>
               <td class="py-2.5 px-2 no-print"></td>
             </tr>
-            <!-- Daily Average Row -->
             <tr id="rowDailyAverage" class="bg-slate-950 text-slate-300 text-[10.5px]">
               <td class="py-2 px-2 text-center text-sky-400 font-sans font-bold">DAILY AVG</td>
               <td class="py-2 px-2 text-center text-slate-400 font-sans">Per Day</td>
-
               <td id="avgOcc" class="py-2 px-2 text-right text-sky-300">0.0</td>
               <td id="avgRO" class="py-2 px-2 text-right text-sky-300">0.0</td>
               <td id="avgCompRms" class="py-2 px-2 text-right text-sky-300">0.0</td>
               <td id="avgCompPax" class="py-2 px-2 text-right text-sky-300">0.0</td>
               <td id="avgInh" class="py-2 px-2 text-right text-sky-200 font-bold">0.0</td>
-
               <td id="avgPMS" class="py-2 px-2 text-right text-indigo-300">0.0</td>
               <td id="avgComp" class="py-2 px-2 text-right text-indigo-300">0.0</td>
               <td id="avgEntitled" class="py-2 px-2 text-right text-amber-400 font-bold">0.0</td>
-
               <td id="avgSeated" class="py-2 px-2 text-right text-amber-300 font-bold">0.0</td>
               <td id="avgWalkin" class="py-2 px-2 text-right">0.0</td>
               <td id="avgKids" class="py-2 px-2 text-right">0.0</td>
               <td id="avgServed" class="py-2 px-2 text-right text-sky-400 font-bold">0.0</td>
-
               <td id="avgVar" class="py-2 px-2 text-right">0.0</td>
               <td id="avgNoShow" class="py-2 px-2 text-right text-slate-400">0.0</td>
               <td id="avgLeakage" class="py-2 px-2 text-right text-rose-400 bg-rose-950/40">0.0</td>
               <td id="avgTurnout" class="py-2 px-2 text-right text-amber-400">0.0%</td>
-
-              <!-- Breakfast Allocation Avg -->
               <td id="avgAlloc" class="py-2 px-2 text-right text-amber-300">0</td>
               <td id="avgRev" class="py-2 px-2 text-right text-emerald-400">0</td>
               <td id="avgLoss" class="py-2 px-2 text-right text-rose-400">0</td>
               <td id="avgCost" class="py-2 px-2 text-right text-slate-300">0</td>
-
               <td class="py-2.5 px-2 text-slate-400 font-sans text-xs">Kitchen Production Baseline</td>
               <td class="py-2.5 px-2 text-center text-slate-500 font-sans text-xs">-</td>
               <td class="py-2.5 px-2 text-center text-slate-500 font-sans text-xs">-</td>
@@ -358,8 +345,6 @@
     <!-- TAB 2: EXECUTIVE SUMMARY & STRATEGIC DASHBOARD                            -->
     <!-- ========================================================================= -->
     <div id="tabContent-dashboard" class="hidden space-y-5">
-      
-      <!-- Top 6 Executive KPI Scorecards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
         <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Total Covers Served</p>
@@ -389,11 +374,10 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss Exposure</p>
           <h3 id="cardLossExposure" class="text-xl font-black font-mono-num text-rose-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk (Leakage × Breakfast Allocation)</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled risk (Leakage × Breakfast Alloc)</p>
         </div>
       </div>
 
-      <!-- Charts Row -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
           <div class="flex items-center justify-between mb-2">
@@ -434,81 +418,11 @@
           </div>
         </div>
       </div>
-
-      <!-- Detailed Audit Breakdown Table -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
-        <h3 class="text-sm font-extrabold text-slate-800 mb-3">Audit Reconciliation: D-1 Night Audit vs POS Cashier vs Resto (MTD vs Daily Average)</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-100 text-slate-600 font-extrabold border-b border-slate-200">
-              <tr>
-                <th class="py-2.5 px-3">Operational &amp; Financial Metric</th>
-                <th class="py-2.5 px-3">Data Source / Formula</th>
-                <th class="py-2.5 px-3 text-right">MTD Total</th>
-                <th class="py-2.5 px-3 text-right">Daily Avg</th>
-                <th class="py-2.5 px-3 text-center">Industry Benchmark</th>
-                <th class="py-2.5 px-3">FBM Analysis &amp; Action Plan</th>
-              </tr>
-            </thead>
-            <tbody id="auditSummaryTbody" class="divide-y divide-slate-200 font-mono-num text-slate-700">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Cross Departmental Action Matrix (SLA) -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm">
-        <h3 class="text-sm font-extrabold text-slate-800 mb-1">Cross-Departmental Internal Control Matrix (FBM - FO - CHEF - FINANCE)</h3>
-        <p class="text-xs text-slate-500 mb-4">Integrated SOP to prevent revenue leakage and maintain breakfast service standards</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="flex items-center space-x-2 text-brand-700 font-extrabold mb-2">
-              <i class="fa-solid fa-bell-concierge"></i>
-              <span>Front Office (FO)</span>
-            </div>
-            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
-              Verify Room Only (RO) and Complimentary / House Use (HU) rooms upon check-in. If over-pax covers are spotted at the outlet, DM immediately posts the charge to the guest folio prior to checkout.
-            </p>
-            <span class="inline-block px-2.5 py-1 rounded-md bg-blue-100 text-brand-800 text-[10px] font-bold">SLA: Zero Unbilled Checkout</span>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="flex items-center space-x-2 text-amber-700 font-extrabold mb-2">
-              <i class="fa-solid fa-door-open"></i>
-              <span>F&amp;B Service (Greeter)</span>
-            </div>
-            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
-              Hostess must cross-check room numbers against the Night Audit Expected Breakfast List. Guests without breakfast entitlement must be directed to the cashier for settlement.
-            </p>
-            <span class="inline-block px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 text-[10px] font-bold">SLA: 100% Door Verification</span>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="flex items-center space-x-2 text-emerald-700 font-extrabold mb-2">
-              <i class="fa-solid fa-kitchen-set"></i>
-              <span>Kitchen (Executive Chef)</span>
-            </div>
-            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
-              Utilize the average Turnout Ratio (88%-92%) to forecast daily buffet food preparation. Never prep 100% of system entitlement to prevent excessive food waste.
-            </p>
-            <span class="inline-block px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">SLA: Food Waste &lt; 8%</span>
-          </div>
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-            <div class="flex items-center space-x-2 text-rose-700 font-extrabold mb-2">
-              <i class="fa-solid fa-calculator"></i>
-              <span>Finance / Night Audit</span>
-            </div>
-            <p class="text-slate-600 text-[11px] leading-relaxed mb-3">
-              Conduct joint reconciliation at 10:30 AM comparing POS cashier bills, hostess door sheets, and PMS DRR. Daily reconciliation closes no later than 11:30 AM WITA.
-            </p>
-            <span class="inline-block px-2.5 py-1 rounded-md bg-rose-100 text-rose-800 text-[10px] font-bold">SLA: Closing at 11:30 AM</span>
-          </div>
-        </div>
-      </div>
     </div>
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODAL POPUP: POST-BREAKFAST ENTRY FORM                                    -->
+  <!-- MODAL 1: POST-BREAKFAST ENTRY FORM (DILENGKAPI PENJELASAN UNTUK WAITER)     -->
   <!-- ========================================================================= -->
   <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
@@ -520,13 +434,18 @@
             <i class="fa-solid fa-clipboard-check text-base"></i>
           </div>
           <div>
-            <h3 class="text-sm font-extrabold text-white">Post-Breakfast Reconciliation Form (10:00 - 11:00 AM WITA)</h3>
+            <h3 class="text-sm font-extrabold text-white">Post-Breakfast Reconciliation Form</h3>
             <p class="text-[11px] text-blue-100">D-1 Night Audit DRR vs Actual Physical Restaurant Covers</p>
           </div>
         </div>
-        <button onclick="closeInputModal()" class="text-white/80 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
+        <div class="flex items-center space-x-2">
+          <button onclick="openGuideModal()" class="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[11px] flex items-center gap-1 shadow-sm transition">
+            <i class="fa-solid fa-circle-info"></i> Petunjuk Kolom
+          </button>
+          <button onclick="closeInputModal()" class="text-white/80 hover:text-white transition p-1">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Modal Body -->
@@ -545,75 +464,97 @@
 
         <!-- 1. DRR Data (D-1 Night Audit) -->
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
-          <div class="flex items-center space-x-2 text-brand-700 font-black mb-3">
-            <i class="fa-solid fa-hotel"></i>
-            <span class="tracking-wide">1. D-1 NIGHT AUDIT DRR DATA (Previous Night's Stay)</span>
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2 text-brand-700 font-black">
+              <i class="fa-solid fa-hotel"></i>
+              <span class="tracking-wide">1. D-1 NIGHT AUDIT DRR DATA (Dari Lembar DRR D-1)</span>
+            </div>
+            <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">Sumber: Front Office</span>
           </div>
+          
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Occupied Rms (C) <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpOcc" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Occupied Rms (C) *</label>
+              <input type="number" id="inpOcc" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Total kamar terisi malam tadi</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">RO Rms (D) <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpRO" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">RO Rms (D) *</label>
+              <input type="number" id="inpRO" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Kamar Room Only (no sarapan)</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Complimentary + House Use Rooms">Comp + HU Rms <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp + HU Rms *</label>
+              <input type="number" id="inpCompRms" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-brand-600 mt-1 leading-tight">Kamar gratis / House Use</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-brand-700 mb-1" title="Pax from Complimentary + House Use Rooms">Comp + HU Pax <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-brand-700 mb-0.5">Comp + HU Pax *</label>
+              <input type="number" id="inpCompPax" min="0" placeholder="0" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-brand-800 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-brand-600 mt-1 leading-tight">Jumlah orang di kamar Comp</p>
             </div>
             <div class="col-span-2 sm:col-span-1">
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">In-House Guests <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-brand-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-700 mb-0.5">In-House Guests *</label>
+              <input type="number" id="inpInh" min="0" placeholder="0" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-bold font-mono focus:outline-none focus:border-brand-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-amber-700 font-semibold mt-1 leading-tight">Semua tamu tidur di hotel</p>
             </div>
           </div>
         </div>
 
         <!-- 2. System Entitlement / PMS -->
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
-          <div class="flex items-center space-x-2 text-indigo-700 font-black mb-3">
-            <i class="fa-solid fa-ticket"></i>
-            <span class="tracking-wide">2. PMS SYSTEM ENTITLEMENT (Authorized Entitled Pax)</span>
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2 text-indigo-700 font-black">
+              <i class="fa-solid fa-ticket"></i>
+              <span class="tracking-wide">2. PMS SYSTEM ENTITLEMENT (Tamu yang Sah Berhak Sarapan)</span>
+            </div>
+            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">Kupon / Kuota Resmi</span>
           </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">PMS Rate Inclusive Pax (F) - <span class="text-slate-400 font-normal">Paid Packages</span> <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpPMS" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">PMS Rate Inclusive Pax (F) *</label>
+              <input type="number" id="inpPMS" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Pax kamar bayar paket sarapan (biasanya 2 orang/kamar)</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Complimentary &amp; VIP Pax (G) - <span class="text-slate-400 font-normal">Comp Rms + GM Vouchers</span> <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpComp" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Complimentary &amp; VIP Pax (G) *</label>
+              <input type="number" id="inpComp" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-indigo-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Tamu VIP / voucher khusus yang diizinkan GM makan gratis</p>
             </div>
           </div>
         </div>
 
         <!-- 3. Restaurant Physical Count & Allocation -->
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
-          <div class="flex items-center space-x-2 text-amber-700 font-black mb-3">
-            <i class="fa-solid fa-utensils"></i>
-            <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT &amp; ALLOCATION</span>
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2 text-amber-700 font-black">
+              <i class="fa-solid fa-utensils"></i>
+              <span class="tracking-wide">3. RESTAURANT PHYSICAL TURNOUT &amp; ALLOCATION</span>
+            </div>
+            <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Pintu Resto &amp; Kasir</span>
           </div>
+
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
-              <label class="block text-[10.5px] font-extrabold text-amber-800 mb-1">In-House Seated (I) <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-amber-900 font-black font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-extrabold text-amber-800 mb-0.5">In-House Seated (I) *</label>
+              <input type="number" id="inpSeated" min="0" placeholder="0" class="w-full bg-white border border-amber-300 rounded-xl px-3 py-2 text-amber-900 font-black font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-amber-800 mt-1 leading-tight">Tamu kamar yang riil duduk makan (dari lembar greeter)</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Extra Adult (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
-              <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Extra Adult (J) <span id="lblHintAdult" class="text-slate-400 font-normal">(@ 150,000)</span></label>
+              <input type="number" id="inpWalkin" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Dewasa yang bayar tiket tambahan di kasir</p>
             </div>
             <div>
-              <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Kids Pax (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
-              <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Kids Pax (K) <span id="lblHintKids" class="text-slate-400 font-normal">(@ 80,000)</span></label>
+              <input type="number" id="inpKids" min="0" placeholder="0" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-slate-400 mt-1 leading-tight">Anak-anak bayar tiket tambahan</p>
             </div>
-            <!-- Custom Breakfast Allocation per Pax Input in Modal -->
             <div>
-              <label class="block text-[10.5px] font-black text-amber-800 mb-1" title="Allocated Room Rate Breakfast per Pax">Breakfast Allocation (Rp) <span class="text-rose-500">*</span></label>
-              <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-3 py-2 text-amber-900 font-bold font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
+              <label class="block text-[10.5px] font-black text-amber-800 mb-0.5">Breakfast Allocation *</label>
+              <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-3 py-2 text-amber-900 font-bold font-mono focus:outline-none focus:border-amber-600 shadow-sm" oninput="recalcModalPreview()">
+              <p class="text-[9.5px] text-amber-800 mt-1 leading-tight">Pengali nilai kerugian jika over-pax</p>
             </div>
           </div>
         </div>
@@ -628,18 +569,22 @@
             <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
               <span class="text-[10px] text-slate-500 block font-bold">Total Entitled (H)</span>
               <span id="prevEntitled" class="font-mono font-black text-amber-600 text-sm">0</span>
+              <span class="text-[9px] text-slate-400 block mt-0.5">Hak Kuota (F+G)</span>
             </div>
             <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
               <span class="text-[10px] text-slate-500 block font-bold">Total Served (L)</span>
               <span id="prevServed" class="font-mono font-black text-brand-600 text-sm">0</span>
+              <span class="text-[9px] text-slate-400 block mt-0.5">Total Piring Keluar</span>
             </div>
             <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
               <span class="text-[10px] text-slate-500 block font-bold">Variance (M)</span>
               <span id="prevVar" class="font-mono font-black text-slate-700 text-sm">0</span>
+              <span class="text-[9px] text-slate-400 block mt-0.5">Selisih (I - H)</span>
             </div>
             <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm">
               <span class="text-[10px] text-rose-600 font-extrabold block">Leakage Loss (Rp)</span>
               <span id="prevLeakage" class="font-mono font-black text-rose-600 text-sm">0</span>
+              <span class="text-[9px] text-rose-500 block mt-0.5">Leakage × Alloc</span>
             </div>
           </div>
         </div>
@@ -647,16 +592,16 @@
         <!-- 4. Remarks, Cashier By & Supervisor -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Root Cause (T)</label>
-            <input type="text" id="inpRemarks" placeholder="e.g., Early flight meal box" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1">Remarks / Catatan Khusus (T)</label>
+            <input type="text" id="inpRemarks" placeholder="Misal: Box bfast tamu flight subuh" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm">
           </div>
           <div>
-            <label class="block text-[10.5px] font-bold text-brand-700 mb-1"><i class="fa-solid fa-cash-register mr-1"></i>Cashier By (POS Input)</label>
-            <input type="text" id="inpCashier" placeholder="e.g., Maya / Andi" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-brand-600 shadow-sm transition">
+            <label class="block text-[10.5px] font-bold text-brand-700 mb-1"><i class="fa-solid fa-cash-register mr-1"></i>Kasir Resto (Input By)</label>
+            <input type="text" id="inpCashier" placeholder="Nama Kasir POS Sarapan" class="w-full bg-white border border-brand-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-brand-600 shadow-sm">
           </div>
           <div>
-            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor / Verified By (U)</label>
-            <input type="text" id="inpSupervisor" placeholder="e.g., Capt. Hadi / DM Budi" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm transition">
+            <label class="block text-[10.5px] font-bold text-slate-600 mb-1"><i class="fa-solid fa-user-check mr-1"></i>Supervisor On Duty (U)</label>
+            <input type="text" id="inpSupervisor" placeholder="Nama Captain / Supervisor" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-brand-600 shadow-sm">
           </div>
         </div>
       </div>
@@ -675,6 +620,124 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: PANDUAN KOLOM KHUSUS WAITER / GREETER / CASHIER                  -->
+  <!-- ========================================================================= -->
+  <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      
+      <!-- Header Panduan -->
+      <div class="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-white/20 text-white flex items-center justify-center text-lg">
+            <i class="fa-solid fa-book-bookmark"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-extrabold text-white">Panduan Istilah &amp; Sumber Kolom Rekonsiliasi Sarapan</h3>
+            <p class="text-[11px] text-amber-100">Buku saku untuk Waiter, Greeter Pintu, dan Kasir POS Platinum Hotel</p>
+          </div>
+        </div>
+        <button onclick="closeGuideModal()" class="text-white/80 hover:text-white transition p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Isi Panduan -->
+      <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
+        
+        <!-- Section 1 -->
+        <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200">
+          <h4 class="font-extrabold text-brand-800 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-file-invoice"></i> 1. Kolom Dari Laporan DRR Night Audit (Front Office)
+          </h4>
+          <ul class="space-y-2 text-slate-700">
+            <li>
+              <strong class="text-slate-900">Occupied Rms (C):</strong> Jumlah kamar yang terisi/dihuni tamu malam sebelumnya.
+            </li>
+            <li>
+              <strong class="text-slate-900">RO Rms (D):</strong> Kamar <em>Room Only</em>. Tamu di kamar ini <strong>TIDAK punya kuota sarapan</strong> gratis. Jika datang ke restoran, wajib diarahkan bayar walk-in.
+            </li>
+            <li>
+              <strong class="text-slate-900">Comp + HU Rms &amp; Pax:</strong> Kamar complimentary (gratisan/voucher) dan House Use (kamar dinas staf/manajemen).
+            </li>
+            <li class="bg-amber-100/70 p-2 rounded-lg border border-amber-300 text-amber-950 font-medium">
+              <strong class="text-amber-900">★ In-House Guests (E):</strong> 
+              <strong>SEMUA orang/tamu</strong> yang tidur di kamar hotel malam tadi tanpa kecuali (gabungan kamar paket sarapan + kamar Room Only + kamar Comp/HU).
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200">
+          <h4 class="font-extrabold text-indigo-900 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-id-card-clip"></i> 2. Jatah Kuota Sah (PMS System Entitlement)
+          </h4>
+          <ul class="space-y-2 text-slate-700">
+            <li>
+              <strong class="text-slate-900">PMS Incl (F):</strong> Tamu kamar berbayar yang beli paket include sarapan (umumnya 2 orang/kamar).
+            </li>
+            <li>
+              <strong class="text-slate-900">Comp &amp; VIP (G):</strong> Tamu complimentary atau tamu yang memegang voucher sarapan resmi bertanda tangan GM.
+            </li>
+            <li>
+              <strong class="text-slate-900">Entitled (H) = (F + G):</strong> 
+              <strong>Total batas maksimal</strong> tamu hotel yang boleh masuk dan makan tanpa ditagih biaya lagi.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+          <h4 class="font-extrabold text-amber-900 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-door-open"></i> 3. Angka Riil Restoran &amp; Kasir (Greeter Sheet)
+          </h4>
+          <ul class="space-y-2 text-slate-700">
+            <li>
+              <strong class="text-slate-900">In-House Seated (I):</strong> Jumlah tamu kamar paket yang <strong>riil datang dan duduk</strong> makan di resto (dihitung dari checklist centang greeter pintu).
+            </li>
+            <li>
+              <strong class="text-slate-900">Extra Adult (J) &amp; Kids (K):</strong> Tamu kamar tanpa kuota atau tamu walk-in yang <strong>sudah bayar tiket sarapan di kasir POS</strong>.
+            </li>
+            <li>
+              <strong class="text-slate-900">Served (L) = (I + J + K):</strong> Total seluruh fisik piring/pax yang keluar dimakan pagi itu.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200">
+          <h4 class="font-extrabold text-rose-900 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> 4. Audit Selisih, Kebocoran (Leakage) &amp; Alokasi
+          </h4>
+          <ul class="space-y-2 text-slate-700">
+            <li>
+              <strong class="text-slate-900">No-Show (N):</strong> Tamu yang punya jatah sarapan tapi tidak datang ke restoran.
+            </li>
+            <li>
+              <strong class="text-rose-700">Leakage / Over-Pax (O):</strong> 
+              Kondisi berbahaya di mana tamu yang duduk makan (I) <strong>melebihi jatah sah kuota (H)</strong>. Ini terjadi jika ada tamu RO atau tamu tambahan yang masuk tanpa dicek kuotanya.
+            </li>
+            <li>
+              <strong class="text-slate-900">Breakfast Allocation:</strong> Nilai alokasi sarapan kamar (diisi custom).
+            </li>
+            <li class="bg-rose-100 p-2 rounded-lg border border-rose-300 text-rose-950 font-bold">
+              Rumus Potensi Kerugian = Leakage (O) × Breakfast Allocation (Rp).
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Footer Panduan -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeGuideModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs transition">
+          Saya Mengerti (Tutup)
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -702,7 +765,7 @@
       FOOD_COST_PAX: 42000
     };
 
-    let currentMonth = 11; // November
+    let currentMonth = 11;
     let currentYear = 2026;
     let daysData = [];
     let trendChartInstance = null;
@@ -734,6 +797,14 @@
         badge.classList.remove('hidden');
         setTimeout(() => { badge.classList.add('hidden'); }, 3000);
       }
+    }
+
+    function openGuideModal() {
+      document.getElementById('guideModal').classList.remove('hidden');
+    }
+
+    function closeGuideModal() {
+      document.getElementById('guideModal').classList.add('hidden');
     }
 
     function updateRateSettings() {
@@ -789,7 +860,7 @@
     }
 
     // ==========================================
-    // 2. SUPABASE DATA FETCHING & SYNC
+    // 2. SUPABASE FETCH & SYNC
     // ==========================================
     async function loadDataFromSupabase() {
       if (!supabaseClient) return;
@@ -919,7 +990,6 @@
       const turnout = entitled > 0 ? (seated / entitled) : 0;
       const walkinRev = (walkin * RATES.ADULT_WALKIN) + (kids * RATES.KIDS);
       
-      // Potential Loss Exposure = Leakage Pax * Breakfast Allocation (Custom)
       const effectiveAlloc = (d.allocation !== null && d.allocation !== undefined && d.allocation !== '') 
         ? Number(d.allocation) 
         : RATES.BREAKFAST_ALLOCATION;
@@ -993,7 +1063,6 @@
           <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'bg-rose-100 text-rose-700 animate-pulse' : ''}">${c.leakage !== null ? (c.leakage > 0 ? c.leakage : 0) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-amber-700 font-bold">${c.turnout !== null ? (c.turnout * 100).toFixed(1) + '%' : '-'}</td>
 
-          <!-- Breakfast Allocation Custom Input -->
           <td class="py-2 px-1 text-right border-r border-slate-200">
             <input type="number" step="1000" value="${allocValueDisplay}" onchange="updateRowAllocation(${c.dayNum}, this.value)" class="w-24 px-1.5 py-0.5 text-right font-bold text-amber-800 bg-amber-50/60 border border-amber-200 rounded focus:bg-white focus:outline-none focus:border-amber-600 text-[10.5px]">
           </td>
@@ -1118,92 +1187,6 @@
       document.getElementById('cardTotalNoShow').textContent = formatNum(data.sumNoShow);
       document.getElementById('cardTotalLeakage').textContent = formatNum(data.sumLeakage);
       document.getElementById('cardLossExposure').textContent = formatPureNumber(data.sumLoss);
-
-      const summaryTbody = document.getElementById('auditSummaryTbody');
-      summaryTbody.innerHTML = `
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-slate-800">Occupied Rooms (D-1 DRR)</td>
-          <td class="py-2.5 px-3 text-slate-500">PMS Night Audit</td>
-          <td class="py-2.5 px-3 text-right text-brand-700 font-bold">${formatNum(data.sumOcc)} Rms</td>
-          <td class="py-2.5 px-3 text-right text-slate-700">${formatNum(data.sumOcc / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">Occupancy 65%-85%</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Total occupied hotel rooms from previous night.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-brand-700">Complimentary &amp; House Use (HU) Rooms &amp; Pax</td>
-          <td class="py-2.5 px-3 text-slate-500">DRR Comp + HU Category</td>
-          <td class="py-2.5 px-3 text-right text-brand-700 font-bold">${formatNum(data.sumCompRms)} Rms / ${formatNum(data.sumCompPax)} Pax</td>
-          <td class="py-2.5 px-3 text-right text-brand-700">${formatNum(data.sumCompPax / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">Max 2%-3% Occ</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Hotel complimentary &amp; house use rooms (Owner/GM/Media/Staff).</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-slate-800">In-House Guests Stayed</td>
-          <td class="py-2.5 px-3 text-slate-500">PMS Guest Count</td>
-          <td class="py-2.5 px-3 text-right text-slate-900 font-black">${formatNum(data.sumInh)} Pax</td>
-          <td class="py-2.5 px-3 text-right text-slate-800">${formatNum(data.sumInh / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">1.6 - 1.9 Guests/Rm</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Double occupancy density ratio per room.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-amber-700">Total System Entitled Pax (H)</td>
-          <td class="py-2.5 px-3 text-slate-500">PMS Rate Incl + Comp (F+G)</td>
-          <td class="py-2.5 px-3 text-right text-amber-700 font-black">${formatNum(data.sumEntitled)} Pax</td>
-          <td class="py-2.5 px-3 text-right text-amber-700">${formatNum(data.sumEntitled / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">100% Authorized</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Total authorized portions entitled to breakfast without bill.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-amber-800">In-House Seated Physical (I)</td>
-          <td class="py-2.5 px-3 text-slate-500">Door Greeter Checklist</td>
-          <td class="py-2.5 px-3 text-right text-amber-800 font-black">${formatNum(data.sumSeated)} Pax</td>
-          <td class="py-2.5 px-3 text-right text-amber-800">${formatNum(data.sumSeated / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">Show-Up 88%-92%</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Actual in-house package diners verified at the door.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-rose-600">Unbilled Leakage / Over-Pax (O)</td>
-          <td class="py-2.5 px-3 text-slate-500">=IF(Seated &gt; Entitled, I-H, 0)</td>
-          <td class="py-2.5 px-3 text-right text-rose-600 font-black">${formatNum(data.sumLeakage)} Pax</td>
-          <td class="py-2.5 px-3 text-right text-rose-600">${formatNum(data.sumLeakage / data.divisor, 1)}</td>
-          <td class="py-2.5 px-3 text-center text-rose-600 font-bold">Target: 0 Cases</td>
-          <td class="py-2.5 px-3 font-sans text-rose-600 font-bold">Guests dining without quota/billing. Mandatory FO post-charge!</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-rose-700">Potential Loss Exposure (Unbilled Financial Risk)</td>
-          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Breakfast Allocation</td>
-          <td class="py-2.5 px-3 text-right text-rose-700 font-black">${formatPureNumber(data.sumLoss)}</td>
-          <td class="py-2.5 px-3 text-right text-rose-700">${formatPureNumber(data.sumLoss / data.divisor)}</td>
-          <td class="py-2.5 px-3 text-center text-rose-700 font-bold">Loss Prevention</td>
-          <td class="py-2.5 px-3 font-sans text-rose-700 font-bold">Unbilled loss evaluated at custom breakfast room allocation rate.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-emerald-700">Direct Extra Walk-in Revenue (Q)</td>
-          <td class="py-2.5 px-3 text-slate-500">POS Bill Extra Adult + Kids</td>
-          <td class="py-2.5 px-3 text-right text-emerald-700 font-black">${formatPureNumber(data.sumRev)}</td>
-          <td class="py-2.5 px-3 text-right text-emerald-700">${formatPureNumber(data.sumRev / data.divisor)}</td>
-          <td class="py-2.5 px-3 text-center text-emerald-700 font-bold">Incremental P&amp;L</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Direct cashier income from extra diners at the restaurant.</td>
-        </tr>
-        <tr class="hover:bg-slate-50">
-          <td class="py-2.5 px-3 font-bold text-slate-700">Estimated Total Food Cost (S)</td>
-          <td class="py-2.5 px-3 text-slate-500">=Served Covers * Standard Cost</td>
-          <td class="py-2.5 px-3 text-right text-slate-800 font-bold">${formatPureNumber(data.sumCost)}</td>
-          <td class="py-2.5 px-3 text-right text-slate-700">${formatPureNumber(data.sumCost / data.divisor)}</td>
-          <td class="py-2.5 px-3 text-center text-slate-500">Standard Budget</td>
-          <td class="py-2.5 px-3 font-sans text-slate-600">Allocated buffet raw food cost issued by the kitchen.</td>
-        </tr>
-      `;
-
-      const totalPax = (data.sumSeated + data.sumWalkin + data.sumKids) || 1;
-      const pctInh = ((data.sumSeated / totalPax) * 100).toFixed(1);
-      const pctAdult = ((data.sumWalkin / totalPax) * 100).toFixed(1);
-      const pctKids = ((data.sumKids / totalPax) * 100).toFixed(1);
-
-      document.getElementById('pieInhouseVal').textContent = pctInh + '%';
-      document.getElementById('pieAdultVal').textContent = pctAdult + '%';
-      document.getElementById('pieKidsVal').textContent = pctKids + '%';
-
       renderCharts(data);
     }
 
@@ -1251,14 +1234,8 @@
                 align: 'top',
                 anchor: 'start',
                 offset: 4,
-                font: {
-                  family: 'JetBrains Mono',
-                  weight: 'bold',
-                  size: 9.5
-                },
-                formatter: function(value) {
-                  return value !== null && value !== undefined ? value : '';
-                }
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 9.5 },
+                formatter: (val) => val !== null ? val : ''
               }
             },
             {
@@ -1276,14 +1253,8 @@
                 align: 'bottom',
                 anchor: 'end',
                 offset: 4,
-                font: {
-                  family: 'JetBrains Mono',
-                  weight: 'bold',
-                  size: 9.5
-                },
-                formatter: function(value) {
-                  return value !== null && value !== undefined ? value : '';
-                }
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 9.5 },
+                formatter: (val) => val !== null ? val : ''
               }
             },
             {
@@ -1298,14 +1269,8 @@
                 align: 'top',
                 anchor: 'end',
                 offset: 2,
-                font: {
-                  family: 'JetBrains Mono',
-                  weight: 'bold',
-                  size: 10
-                },
-                formatter: function(value) {
-                  return (value && value > 0) ? value : '';
-                }
+                font: { family: 'JetBrains Mono', weight: 'bold', size: 10 },
+                formatter: (val) => (val && val > 0) ? val : ''
               }
             }
           ]
@@ -1313,34 +1278,15 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          layout: {
-            padding: {
-              top: 24,
-              bottom: 8
-            }
-          },
+          layout: { padding: { top: 24, bottom: 8 } },
           interaction: { mode: 'index', intersect: false },
           plugins: {
-            legend: { 
-              labels: { 
-                color: '#334155', 
-                font: { family: 'Plus Jakarta Sans', size: 10.5, weight: 'bold' } 
-              } 
-            },
-            tooltip: {
-              enabled: true
-            }
+            legend: { labels: { color: '#334155', font: { family: 'Plus Jakarta Sans', size: 10.5, weight: 'bold' } } },
+            tooltip: { enabled: true }
           },
           scales: {
-            x: { 
-              grid: { color: 'rgba(0,0,0,0.04)' }, 
-              ticks: { color: '#64748b', font: { size: 9.5 } } 
-            },
-            y: { 
-              grid: { color: 'rgba(0,0,0,0.04)' }, 
-              ticks: { color: '#64748b', font: { size: 10 } },
-              suggestedMax: 100
-            }
+            x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#64748b', font: { size: 9.5 } } },
+            y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#64748b', font: { size: 10 } }, suggestedMax: 100 }
           }
         }
       });
@@ -1366,9 +1312,9 @@
             datalabels: {
               color: '#ffffff',
               font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 11 },
-              formatter: function(value, context) {
+              formatter: (val) => {
                 if (data.sumServed <= 0) return '';
-                const pct = ((value / data.sumServed) * 100).toFixed(0);
+                const pct = ((val / data.sumServed) * 100).toFixed(0);
                 return pct > 5 ? pct + '%' : '';
               }
             }
