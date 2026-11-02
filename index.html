@@ -146,7 +146,7 @@
         </button>
       </div>
 
-      <!-- EDITABLE RATES PARAMETER BAR (WITH DEFAULT BREAKFAST ALLOCATION) -->
+      <!-- EDITABLE RATES PARAMETER BAR -->
       <div class="flex flex-wrap items-center space-x-2 text-xs bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200">
         <span class="text-slate-500 font-bold text-[11px] mr-1"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rate Settings:</span>
         
@@ -164,9 +164,9 @@
         
         <span class="text-slate-300">•</span>
 
-        <!-- Default Breakfast Allocation -->
-        <div class="flex items-center space-x-1 bg-amber-50/80 px-2 py-0.5 rounded-lg border border-amber-200">
-          <label class="text-[11px] text-amber-900 font-bold" title="Default Room Rate Breakfast Allocation (Rp)">Bkf Alloc:</label>
+        <!-- Default Breakfast Allocation Input -->
+        <div class="flex items-center space-x-1 bg-amber-50/80 px-2.5 py-0.5 rounded-lg border border-amber-200">
+          <label class="text-[11px] text-amber-900 font-bold" title="Default Room Rate Breakfast Allocation (Rp)">Breakfast Allocation:</label>
           <input type="number" id="cfgRateAlloc" value="100000" step="1000" oninput="updateRateSettings()" class="w-24 bg-white border border-amber-300 rounded-md px-2 py-0.5 text-amber-900 font-black font-mono text-right focus:outline-none focus:border-amber-600 shadow-inner">
         </div>
 
@@ -222,7 +222,6 @@
               <th colspan="3" class="py-2.5 px-2 border-r border-slate-200 text-indigo-700 bg-indigo-50/70">SYSTEM ENTITLEMENT / PMS</th>
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-amber-800 bg-amber-50/80">RESTAURANT ACTUAL COUNT</th>
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-rose-700 bg-rose-50/80">AUDIT VARIANCE &amp; DISCREPANCY</th>
-              <!-- FINANCIAL & COST NOW 4 COLUMNS -->
               <th colspan="4" class="py-2.5 px-2 border-r border-slate-200 text-emerald-800 bg-emerald-50/70">FINANCIAL &amp; COST CONTROL</th>
               <th colspan="4" class="py-2.5 px-2 text-slate-600 bg-slate-100">AUDIT, CASHIER &amp; ACTION</th>
             </tr>
@@ -255,8 +254,8 @@
               <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Unbilled Over-Pax Admitted (LEAKAGE)">Leakage (O)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Turnout Ratio % = I / H">Turnout (P)</th>
 
-              <!-- Financial Estimations (NEW COLUMN: Bkf Alloc) -->
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Custom Breakfast Room Allocation per Pax (Rp)">Bkf Alloc (Rp)</th>
+              <!-- Financial Estimations (Breakfast Allocation Column) -->
+              <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Custom Breakfast Room Allocation per Pax (Rp)">Breakfast Allocation (Rp)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Extra POS Sales = (J*RateAdult) + (K*RateKids)">Walk-in Rev (Q)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = Leakage (O) * Breakfast Allocation">Leak Loss (R)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-slate-100" title="Estimated Buffet Food Cost = L * RateCost">Food Cost (S)</th>
@@ -297,7 +296,7 @@
               <td id="totLeakage" class="py-2.5 px-2 text-right text-rose-400 font-black bg-rose-950/60">0</td>
               <td id="totTurnout" class="py-2.5 px-2 text-right text-amber-400">0.0%</td>
 
-              <!-- Bkf Allocation Total -->
+              <!-- Breakfast Allocation Total -->
               <td id="totAlloc" class="py-2.5 px-2 text-right text-amber-300">-</td>
               <td id="totRev" class="py-2.5 px-2 text-right text-emerald-400 font-black">0</td>
               <td id="totLoss" class="py-2.5 px-2 text-right text-rose-400 font-black">0</td>
@@ -333,7 +332,7 @@
               <td id="avgLeakage" class="py-2 px-2 text-right text-rose-400 bg-rose-950/40">0.0</td>
               <td id="avgTurnout" class="py-2 px-2 text-right text-amber-400">0.0%</td>
 
-              <!-- Bkf Allocation Avg -->
+              <!-- Breakfast Allocation Avg -->
               <td id="avgAlloc" class="py-2 px-2 text-right text-amber-300">0</td>
               <td id="avgRev" class="py-2 px-2 text-right text-emerald-400">0</td>
               <td id="avgLoss" class="py-2 px-2 text-right text-rose-400">0</td>
@@ -384,7 +383,7 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Potential Loss Exposure</p>
           <h3 id="cardLossExposure" class="text-xl font-black font-mono-num text-rose-600 mt-1">0</h3>
-          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk (O × Bkf Alloc)</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">Unbilled financial risk (Leakage × Breakfast Allocation)</p>
         </div>
       </div>
 
@@ -586,7 +585,7 @@
           </div>
         </div>
 
-        <!-- 3. Restaurant Physical Count & Dynamic Rates Hint -->
+        <!-- 3. Restaurant Physical Count & Allocation -->
         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200">
           <div class="flex items-center space-x-2 text-amber-700 font-black mb-3">
             <i class="fa-solid fa-utensils"></i>
@@ -607,7 +606,7 @@
             </div>
             <!-- Custom Breakfast Allocation per Pax Input in Modal -->
             <div>
-              <label class="block text-[10.5px] font-black text-amber-800 mb-1" title="Allocated Room Rate Breakfast per Pax">Bkf Allocation (Rp) <span class="text-rose-500">*</span></label>
+              <label class="block text-[10.5px] font-black text-amber-800 mb-1" title="Allocated Room Rate Breakfast per Pax">Breakfast Allocation (Rp) <span class="text-rose-500">*</span></label>
               <input type="number" id="inpAlloc" min="0" step="1000" placeholder="100000" class="w-full bg-white border border-amber-400 rounded-xl px-3 py-2 text-amber-900 font-bold font-mono focus:outline-none focus:border-amber-600 shadow-sm transition" oninput="recalcModalPreview()">
             </div>
           </div>
@@ -802,7 +801,7 @@
       const turnout = entitled > 0 ? (seated / entitled) : 0;
       const walkinRev = (walkin * RATES.ADULT_WALKIN) + (kids * RATES.KIDS);
       
-      // KEY LOGIC: Potential Loss Exposure = Leakage Pax * Breakfast Allocation (Custom)
+      // Potential Loss Exposure = Leakage Pax * Breakfast Allocation (Custom)
       const effectiveAlloc = (d.allocation !== null && d.allocation !== undefined && d.allocation !== '') 
         ? Number(d.allocation) 
         : RATES.BREAKFAST_ALLOCATION;
@@ -876,9 +875,9 @@
           <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'bg-rose-100 text-rose-700 animate-pulse' : ''}">${c.leakage !== null ? (c.leakage > 0 ? c.leakage : 0) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-amber-700 font-bold">${c.turnout !== null ? (c.turnout * 100).toFixed(1) + '%' : '-'}</td>
 
-          <!-- Custom Bkf Allocation Input per Row -->
+          <!-- Custom Breakfast Allocation Input per Row -->
           <td class="py-2 px-1 text-right border-r border-slate-200">
-            <input type="number" step="1000" value="${allocValueDisplay}" onchange="updateRowAllocation(${c.dayNum}, this.value)" class="w-20 px-1.5 py-0.5 text-right font-bold text-amber-800 bg-amber-50/60 border border-amber-200 rounded focus:bg-white focus:outline-none focus:border-amber-600 text-[10.5px]">
+            <input type="number" step="1000" value="${allocValueDisplay}" onchange="updateRowAllocation(${c.dayNum}, this.value)" class="w-24 px-1.5 py-0.5 text-right font-bold text-amber-800 bg-amber-50/60 border border-amber-200 rounded focus:bg-white focus:outline-none focus:border-amber-600 text-[10.5px]">
           </td>
 
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-emerald-700 font-bold">${c.walkinRev !== null ? formatPureNumber(c.walkinRev) : '-'}</td>
@@ -1054,7 +1053,7 @@
         </tr>
         <tr class="hover:bg-slate-50">
           <td class="py-2.5 px-3 font-bold text-rose-700">Potential Loss Exposure (Unbilled Financial Risk)</td>
-          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Bkf Allocation (Custom)</td>
+          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Breakfast Allocation (Custom)</td>
           <td class="py-2.5 px-3 text-right text-rose-700 font-black">${formatPureNumber(data.sumLoss)}</td>
           <td class="py-2.5 px-3 text-right text-rose-700">${formatPureNumber(data.sumLoss / data.divisor)}</td>
           <td class="py-2.5 px-3 text-center text-rose-700 font-bold">Loss Prevention</td>
@@ -1314,7 +1313,7 @@
       document.getElementById('inpWalkin').value = d.walkin !== null ? d.walkin : '';
       document.getElementById('inpKids').value = d.kids !== null ? d.kids : '';
       
-      // Load custom allocation or fallback to global default
+      // Load custom Breakfast Allocation or fallback to global default
       document.getElementById('inpAlloc').value = (d.allocation !== null && d.allocation !== undefined) 
         ? d.allocation 
         : RATES.BREAKFAST_ALLOCATION;
