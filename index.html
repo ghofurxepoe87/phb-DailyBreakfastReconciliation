@@ -15,8 +15,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Chart.js DataLabels Plugin CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <!-- Supabase JS Client v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <script>
     tailwind.config = {
       theme: {
@@ -71,7 +74,7 @@
   <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print">
     <div class="max-w-[1850px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center space-x-3.5">
-        <!-- Logo Card (Using logo.png with Fallback) -->
+        <!-- Logo Card -->
         <div class="bg-white/95 px-3 py-1.5 rounded-xl shadow-md flex items-center border border-white/60">
           <img src="logo.png" alt="Platinum Hotel & Convention Balikpapan" class="h-9 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ac9e7e] to-[#c5a880] flex items-center justify-center text-white font-extrabold text-sm shadow\'>P</div><div class=\'leading-tight ml-2\'><span class=\'block text-xs font-black tracking-wider text-slate-800\'>PLATINUM</span><span class=\'block text-[8px] font-bold tracking-widest text-[#ac9e7e] uppercase\'>Hotel & Convention</span></div>';">
         </div>
@@ -80,6 +83,9 @@
           <div class="flex items-center space-x-2">
             <h1 class="text-base sm:text-lg font-extrabold text-white tracking-wide">Breakfast Reconciliation &amp; Audit</h1>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white border border-white/30 backdrop-blur-sm uppercase">FBM System</span>
+            <span id="syncStatus" class="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-emerald-500/30 text-emerald-100 border border-emerald-400/40 hidden">
+              <i class="fa-solid fa-cloud-arrow-up mr-1"></i>Cloud Synced
+            </span>
           </div>
           <p class="text-[11.5px] text-blue-100/90 font-medium">Daily PMS &amp; DRR Reconciliation, Actual Physical Count, Loss Prevention &amp; Cost Control</p>
         </div>
@@ -207,7 +213,7 @@
         </div>
 
         <div class="text-xs text-slate-500 font-medium">
-          <span class="text-rose-600 font-bold">*Formula Update:</span> Potential Loss Exposure = <span class="font-mono font-bold text-slate-700">Leakage (Over-Pax) × Breakfast Allocation (Custom)</span>
+          <span class="text-rose-600 font-bold">*Formula Update:</span> Potential Loss Exposure = <span class="font-mono font-bold text-slate-700">Leakage (Over-Pax) × Breakfast Allocation</span>
         </div>
       </div>
 
@@ -254,7 +260,7 @@
               <th class="py-2.5 px-2 border-r border-brand-700 bg-rose-600 text-white font-black" title="Unbilled Over-Pax Admitted (LEAKAGE)">Leakage (O)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-amber-200" title="Turnout Ratio % = I / H">Turnout (P)</th>
 
-              <!-- Financial Estimations (Breakfast Allocation Column) -->
+              <!-- Financial Estimations -->
               <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-600/70 text-amber-100 font-bold" title="Custom Breakfast Room Allocation per Pax (Rp)">Breakfast Allocation (Rp)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-emerald-200" title="Extra POS Sales = (J*RateAdult) + (K*RateKids)">Walk-in Rev (Q)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-rose-200 font-bold" title="Unbilled Revenue Loss Exposure = Leakage (O) * Breakfast Allocation">Leak Loss (R)</th>
@@ -268,7 +274,7 @@
             </tr>
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-200 font-mono-num text-[11px] text-slate-700">
-            <!-- Dynamically rendered via JS -->
+            <!-- Rendered via JS -->
           </tbody>
           <tfoot class="bg-slate-900 border-t-2 border-brand-600 font-bold font-mono-num text-white shadow-lg">
             <!-- MTD Total Row -->
@@ -672,12 +678,27 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <!-- JAVASCRIPT LOGIC ENGINE & SUPABASE CLOUD SYNC -->
   <script>
+    // ==========================================
+    // 1. SUPABASE CLIENT INITIALIZATION
+    // ==========================================
+    const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1cHZobnZ6dHZ6cWJkaHV1a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNDY4NTIsImV4cCI6MjEwNTgyMjg1Mn0.E-XiAzngGIe_KAe2Znk201Jy55zwLUMOwL4cHhxQCPQ';
+
+    let supabaseClient = null;
+    if (typeof supabase !== 'undefined') {
+      try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } catch (err) {
+        console.error('Supabase init error:', err);
+      }
+    }
+
     let RATES = {
       ADULT_WALKIN: 150000,
       KIDS: 80000,
-      BREAKFAST_ALLOCATION: 100000, // Default Breakfast Allocation
+      BREAKFAST_ALLOCATION: 100000,
       FOOD_COST_PAX: 42000
     };
 
@@ -705,6 +726,14 @@
     function formatNum(num, decimals = 0) {
       if (num === null || num === undefined || isNaN(num)) return '0';
       return Number(num).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    function showCloudSyncBadge() {
+      const badge = document.getElementById('syncStatus');
+      if (badge) {
+        badge.classList.remove('hidden');
+        setTimeout(() => { badge.classList.add('hidden'); }, 3000);
+      }
     }
 
     function updateRateSettings() {
@@ -750,7 +779,7 @@
           seated: null,
           walkin: null,
           kids: null,
-          allocation: null, // Custom Breakfast Allocation per day
+          allocation: null,
           remarks: '',
           cashier: '',
           supervisor: '',
@@ -759,12 +788,101 @@
       }
     }
 
-    // Direct Inline Edit for Breakfast Allocation in Table Row
+    // ==========================================
+    // 2. SUPABASE DATA FETCHING & SYNC
+    // ==========================================
+    async function loadDataFromSupabase() {
+      if (!supabaseClient) return;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('breakfast_reconciliation')
+          .select('*')
+          .eq('month', currentMonth)
+          .eq('year', currentYear);
+
+        if (error) {
+          console.warn('Gagal memuat data dari Supabase:', error.message);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          data.forEach(dbRow => {
+            const idx = daysData.findIndex(item => item.dayNum === dbRow.day_num);
+            if (idx !== -1) {
+              daysData[idx].occ = dbRow.occ;
+              daysData[idx].ro = dbRow.ro;
+              daysData[idx].compRms = dbRow.comp_rms;
+              daysData[idx].compPax = dbRow.comp_pax;
+              daysData[idx].inh = dbRow.inh;
+              daysData[idx].pms = dbRow.pms;
+              daysData[idx].comp = dbRow.comp;
+              daysData[idx].seated = dbRow.seated;
+              daysData[idx].walkin = dbRow.walkin;
+              daysData[idx].kids = dbRow.kids;
+              daysData[idx].allocation = dbRow.allocation;
+              daysData[idx].remarks = dbRow.remarks || '';
+              daysData[idx].cashier = dbRow.cashier || '';
+              daysData[idx].supervisor = dbRow.supervisor || '';
+              daysData[idx].isFilled = dbRow.is_filled;
+            }
+          });
+          renderTable();
+          showCloudSyncBadge();
+        }
+      } catch (e) {
+        console.error('Supabase fetch exception:', e);
+      }
+    }
+
+    async function syncDayToSupabase(d) {
+      if (!supabaseClient) return;
+
+      const payload = {
+        date: d.date,
+        day_num: d.dayNum,
+        day_name: d.dayName,
+        month: currentMonth,
+        year: currentYear,
+        occ: d.occ || 0,
+        ro: d.ro || 0,
+        comp_rms: d.compRms || 0,
+        comp_pax: d.compPax || 0,
+        inh: d.inh || 0,
+        pms: d.pms || 0,
+        comp: d.comp || 0,
+        seated: d.seated || 0,
+        walkin: d.walkin || 0,
+        kids: d.kids || 0,
+        allocation: (d.allocation !== null && d.allocation !== undefined) ? d.allocation : RATES.BREAKFAST_ALLOCATION,
+        remarks: d.remarks || '',
+        cashier: d.cashier || '',
+        supervisor: d.supervisor || '',
+        is_filled: d.isFilled,
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        const { error } = await supabaseClient
+          .from('breakfast_reconciliation')
+          .upsert(payload, { onConflict: 'date' });
+
+        if (error) {
+          console.error('Supabase save error:', error.message);
+        } else {
+          showCloudSyncBadge();
+        }
+      } catch (err) {
+        console.error('Supabase upsert exception:', err);
+      }
+    }
+
     function updateRowAllocation(dayNum, val) {
       const idx = daysData.findIndex(item => item.dayNum === dayNum);
       if (idx !== -1) {
         daysData[idx].allocation = val !== '' ? Number(val) : null;
         renderTable();
+        syncDayToSupabase(daysData[idx]);
       }
     }
 
@@ -875,7 +993,7 @@
           <td class="py-2.5 px-2 text-right border-r border-slate-200 font-black ${isLeak ? 'bg-rose-100 text-rose-700 animate-pulse' : ''}">${c.leakage !== null ? (c.leakage > 0 ? c.leakage : 0) : '-'}</td>
           <td class="py-2.5 px-2 text-right border-r border-slate-200 text-amber-700 font-bold">${c.turnout !== null ? (c.turnout * 100).toFixed(1) + '%' : '-'}</td>
 
-          <!-- Custom Breakfast Allocation Input per Row -->
+          <!-- Breakfast Allocation Custom Input -->
           <td class="py-2 px-1 text-right border-r border-slate-200">
             <input type="number" step="1000" value="${allocValueDisplay}" onchange="updateRowAllocation(${c.dayNum}, this.value)" class="w-24 px-1.5 py-0.5 text-right font-bold text-amber-800 bg-amber-50/60 border border-amber-200 rounded focus:bg-white focus:outline-none focus:border-amber-600 text-[10.5px]">
           </td>
@@ -1053,7 +1171,7 @@
         </tr>
         <tr class="hover:bg-slate-50">
           <td class="py-2.5 px-3 font-bold text-rose-700">Potential Loss Exposure (Unbilled Financial Risk)</td>
-          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Breakfast Allocation (Custom)</td>
+          <td class="py-2.5 px-3 text-slate-500">=Leakage (O) × Breakfast Allocation</td>
           <td class="py-2.5 px-3 text-right text-rose-700 font-black">${formatPureNumber(data.sumLoss)}</td>
           <td class="py-2.5 px-3 text-right text-rose-700">${formatPureNumber(data.sumLoss / data.divisor)}</td>
           <td class="py-2.5 px-3 text-center text-rose-700 font-bold">Loss Prevention</td>
@@ -1313,7 +1431,6 @@
       document.getElementById('inpWalkin').value = d.walkin !== null ? d.walkin : '';
       document.getElementById('inpKids').value = d.kids !== null ? d.kids : '';
       
-      // Load custom Breakfast Allocation or fallback to global default
       document.getElementById('inpAlloc').value = (d.allocation !== null && d.allocation !== undefined) 
         ? d.allocation 
         : RATES.BREAKFAST_ALLOCATION;
@@ -1361,7 +1478,7 @@
       }
     }
 
-    function saveModalData() {
+    async function saveModalData() {
       const dayNum = Number(document.getElementById('modalDaySelect').value);
       const idx = daysData.findIndex(item => item.dayNum === dayNum);
       if (idx === -1) return;
@@ -1401,9 +1518,10 @@
 
       closeInputModal();
       renderTable();
+      await syncDayToSupabase(daysData[idx]);
     }
 
-    function clearSingleDay() {
+    async function clearSingleDay() {
       const dayNum = Number(document.getElementById('modalDaySelect').value);
       const idx = daysData.findIndex(item => item.dayNum === dayNum);
       if (idx === -1) return;
@@ -1426,6 +1544,7 @@
 
       loadDayDataToModal(dayNum);
       renderTable();
+      await syncDayToSupabase(daysData[idx]);
     }
 
     function switchTab(tabId) {
@@ -1449,6 +1568,7 @@
       document.getElementById('periodBadge').textContent = `${getMonthName(currentMonth)} ${currentYear}`;
       initMonthData();
       renderTable();
+      loadDataFromSupabase();
     }
 
     function getMonthName(m) {
@@ -1479,6 +1599,7 @@
       document.getElementById('periodBadge').textContent = `${getMonthName(currentMonth)} ${currentYear}`;
       initMonthData();
       updateRateSettings();
+      loadDataFromSupabase();
     });
   </script>
 </body>
