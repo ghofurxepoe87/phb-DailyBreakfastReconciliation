@@ -62,7 +62,6 @@
     }
     .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     
-    /* Mencegah iOS Safari auto-zoom saat fokus pada input */
     @media screen and (max-width: 768px) {
       input, select, textarea {
         font-size: 16px !important;
@@ -85,11 +84,10 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased pb-24 lg:pb-8 selection:bg-brand-500 selection:text-white">
 
-  <!-- TOP HEADER / BRANDING (RESPONSIVE FOR NOTCH & SAFE-AREA) -->
+  <!-- TOP HEADER / BRANDING -->
   <header class="bg-gradient-to-r from-[#0068a3] via-[#0076b5] to-[#0089cd] shadow-md border-b border-brand-700 sticky top-0 z-40 no-print pt-[env(safe-area-inset-top,0px)]">
     <div class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
       
-      <!-- Brand & Title -->
       <div class="flex items-center space-x-2.5 sm:space-x-3.5">
         <div class="bg-white/95 px-2 sm:px-3 py-1 rounded-xl shadow-md flex items-center border border-white/60 shrink-0">
           <img src="logo.png" alt="Platinum Hotel" class="h-7 sm:h-9 w-auto object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-[#ac9e7e] to-[#c5a880] flex items-center justify-center text-white font-extrabold text-xs sm:text-sm shadow\'>P</div><div class=\'leading-tight ml-1.5 hidden sm:block\'><span class=\'block text-[11px] font-black tracking-wider text-slate-800\'>PLATINUM</span><span class=\'block text-[7px] font-bold tracking-widest text-[#ac9e7e] uppercase\'>Hotel</span></div>';">
@@ -107,7 +105,6 @@
         </div>
       </div>
 
-      <!-- Quick Action Controls (Desktop & Mobile Header) -->
       <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
         <button onclick="openGuideModal()" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-[11px] sm:text-xs flex items-center space-x-1 shadow-sm active:scale-95 transition">
           <i class="fa-solid fa-circle-question text-xs sm:text-sm"></i>
@@ -130,7 +127,6 @@
   <div class="bg-white border-b border-slate-200/90 shadow-sm no-print">
     <div class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-2.5">
       
-      <!-- Period Selector -->
       <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs w-full sm:w-auto justify-between sm:justify-start">
         <div class="flex items-center space-x-1 px-1.5 text-xs font-bold text-slate-600">
           <i class="fa-regular fa-calendar-days text-brand-600"></i>
@@ -150,7 +146,6 @@
         <span id="periodBadge" class="text-[11px] font-black text-brand-700 px-2.5 py-1 rounded-lg bg-brand-50 border border-brand-200 shrink-0">Nov 2026</span>
       </div>
 
-      <!-- Navigation Tabs -->
       <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold w-full sm:w-auto">
         <button onclick="switchTab('daily')" id="tabBtn-daily" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-brand-600 text-white font-extrabold transition shadow-sm text-center">
           <i class="fa-solid fa-table-list mr-1"></i>Harian
@@ -160,7 +155,6 @@
         </button>
       </div>
 
-      <!-- EDITABLE RATES PARAMETER BAR -->
       <div class="w-full xl:w-auto overflow-x-auto pb-1 sm:pb-0">
         <div class="flex items-center space-x-2 text-xs bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 whitespace-nowrap min-w-max">
           <span class="text-slate-500 font-bold text-[10.5px]"><i class="fa-solid fa-sliders text-brand-600 mr-1"></i>Rates:</span>
@@ -204,7 +198,6 @@
     <!-- ========================================================================= -->
     <div id="tabContent-daily" class="space-y-3.5">
       
-      <!-- Status Card -->
       <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center space-x-3">
           <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center text-sm sm:text-base shadow-sm shrink-0">
@@ -222,7 +215,6 @@
           </div>
         </div>
 
-        <!-- Mode Tampilan Switcher Khusus Mobile -->
         <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs font-bold lg:hidden w-full xs:w-auto justify-end">
           <span class="text-[10px] text-slate-500 mr-1 font-semibold">Tampilan:</span>
           <button onclick="setMobileView('cards')" id="btnViewCards" class="px-2.5 py-1 rounded-lg bg-white text-brand-700 shadow-sm font-extrabold text-[11px]">
@@ -234,10 +226,8 @@
         </div>
       </div>
 
-      <!-- 1. MOBILE CARD VIEW CONTAINER (OPTIMIZED FOR ANDROID & IPHONE) -->
-      <div id="mobileCardsContainer" class="lg:hidden space-y-3">
-        <!-- Rendered dynamically by JS -->
-      </div>
+      <!-- 1. MOBILE CARD VIEW CONTAINER -->
+      <div id="mobileCardsContainer" class="lg:hidden space-y-3"></div>
 
       <!-- 2. DESKTOP / TABLET MASTER TABLE VIEW -->
       <div id="desktopTableContainer" class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto hidden lg:block">
@@ -287,9 +277,7 @@
               <th class="py-2.5 px-2 w-14 no-print">Action</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="divide-y divide-slate-200 font-mono-num text-[11px] text-slate-700">
-            <!-- Dynamically rendered via JS -->
-          </tbody>
+          <tbody id="tableBody" class="divide-y divide-slate-200 font-mono-num text-[11px] text-slate-700"></tbody>
           <tfoot class="bg-slate-900 border-t-2 border-brand-600 font-bold font-mono-num text-white shadow-lg">
             <tr id="rowTotalMTD" class="border-b border-slate-800 bg-slate-900">
               <td class="py-2.5 px-2 text-center text-amber-400 font-sans font-black">TOTAL MTD</td>
@@ -426,9 +414,7 @@
     </div>
   </main>
 
-  <!-- ========================================================================= -->
-  <!-- FLOATING BOTTOM ACTION BAR FOR MOBILE (ANDROID / IOS THUMB-FRIENDLY)     -->
-  <!-- ========================================================================= -->
+  <!-- FLOATING BOTTOM ACTION BAR FOR MOBILE -->
   <div class="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-xl flex items-center justify-between gap-2.5 z-40 lg:hidden pb-[max(0.75rem,env(safe-area-inset-bottom))]">
     <button onclick="openGuideModal()" class="flex-1 py-3 px-3 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs flex items-center justify-center space-x-1.5 active:scale-95 transition">
       <i class="fa-solid fa-book-open text-amber-700 text-sm"></i>
@@ -440,13 +426,10 @@
     </button>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL 1: POST-BREAKFAST ENTRY FORM (TOUCH-OPTIMIZED FOR ANDROID & IOS)   -->
-  <!-- ========================================================================= -->
+  <!-- MODAL 1: POST-BREAKFAST ENTRY FORM -->
   <div id="inputModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
       
-      <!-- Modal Header -->
       <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-[#0068a3] to-[#0076b5] text-white flex items-center justify-between shrink-0">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-inner">
@@ -467,21 +450,17 @@
         </div>
       </div>
 
-      <!-- Modal Body (Scrollable with thumb pads) -->
       <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs">
         
-        <!-- Date Selector Bar -->
         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
           <div>
             <label class="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tanggal Operasional:</label>
             <span id="modalDateLabel" class="text-xs text-brand-700 font-black">Loading...</span>
           </div>
           <select id="modalDaySelect" onchange="loadDayDataToModal(this.value)" class="bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 font-bold focus:outline-none focus:border-brand-600 shadow-sm">
-            <!-- Populated via JS -->
           </select>
         </div>
 
-        <!-- 1. DRR Data (D-1 Night Audit) -->
         <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center space-x-1.5 text-brand-700 font-black text-xs">
@@ -520,7 +499,6 @@
           </div>
         </div>
 
-        <!-- 2. System Entitlement / PMS -->
         <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center space-x-1.5 text-indigo-700 font-black text-xs">
@@ -544,7 +522,6 @@
           </div>
         </div>
 
-        <!-- 3. Restaurant Physical Count & Allocation -->
         <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center space-x-1.5 text-amber-700 font-black text-xs">
@@ -578,7 +555,6 @@
           </div>
         </div>
 
-        <!-- Live Calculation Preview Card -->
         <div class="p-3.5 rounded-2xl bg-slate-100/90 border border-slate-200">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[9.5px] font-black text-slate-500 uppercase tracking-wider">Preview Audit Otomatis</span>
@@ -604,7 +580,6 @@
           </div>
         </div>
 
-        <!-- 4. Remarks, Cashier By & Supervisor -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <div>
             <label class="block text-[10.5px] font-bold text-slate-600 mb-0.5">Remarks / Keterangan</label>
@@ -621,7 +596,6 @@
         </div>
       </div>
 
-      <!-- Modal Footer (Large Thumb Buttons) -->
       <div class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
         <button onclick="clearSingleDay()" class="px-3 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
           Reset Hari Ini
@@ -638,13 +612,10 @@
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL 2: PANDUAN KOLOM KHUSUS WAITER & KASIR                             -->
-  <!-- ========================================================================= -->
+  <!-- MODAL 2: PANDUAN KOLOM -->
   <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
       
-      <!-- Header Panduan -->
       <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between shrink-0">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-white/20 text-white flex items-center justify-center text-base">
@@ -660,7 +631,6 @@
         </button>
       </div>
 
-      <!-- Isi Panduan -->
       <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs text-slate-700 leading-relaxed">
         
         <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200">
@@ -715,7 +685,6 @@
 
       </div>
 
-      <!-- Footer Panduan -->
       <div class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
         <button onclick="closeGuideModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 text-white font-extrabold text-xs transition active:scale-95 text-center">
           Tutup Panduan
@@ -725,9 +694,8 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC ENGINE & MOBILE CARDS RENDERER -->
+  <!-- JAVASCRIPT LOGIC ENGINE -->
   <script>
-    // 1. SUPABASE CLIENT
     const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1cHZobnZ6dHZ6cWJkaHV1a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNDY4NTIsImV4cCI6MjEwNTgyMjg1Mn0.E-XiAzngGIe_KAe2Znk201Jy55zwLUMOwL4cHhxQCPQ';
 
@@ -752,7 +720,7 @@
     let daysData = [];
     let trendChartInstance = null;
     let compChartInstance = null;
-    let mobileViewMode = 'cards'; // 'cards' or 'table'
+    let mobileViewMode = 'cards';
 
     function getDaysInMonth(year, month) {
       return new Date(year, month, 0).getDate();
@@ -864,7 +832,6 @@
       }
     }
 
-    // 2. SUPABASE FETCH & SYNC
     async function loadDataFromSupabase() {
       if (!supabaseClient) return;
 
@@ -1039,7 +1006,7 @@
 
         const allocValueDisplay = item.allocation !== null ? item.allocation : RATES.BREAKFAST_ALLOCATION;
 
-        // 1. RENDER DESKTOP TABLE ROW
+        // Desktop Table Row
         const tr = document.createElement('tr');
         const zebra = idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white';
         tr.className = `hover:bg-blue-50/80 transition font-mono-num ${item.isFilled ? zebra : 'bg-white/40 text-slate-400'}`;
@@ -1087,7 +1054,7 @@
         `;
         tbody.appendChild(tr);
 
-        // 2. RENDER MOBILE CARD (KHUSUS TAMPILAN HP ANDROID / IOS)
+        // Mobile Card View
         const mCard = document.createElement('div');
         mCard.className = `p-3.5 rounded-2xl bg-white border ${isLeak ? 'border-rose-300 ring-1 ring-rose-200' : 'border-slate-200'} shadow-sm space-y-2.5 transition active:scale-[0.99]`;
 
@@ -1220,6 +1187,7 @@
       document.getElementById('avgLoss').textContent = formatPureNumber(sumLoss / divisor);
       document.getElementById('avgCost').textContent = formatPureNumber(sumCost / divisor);
 
+      // Pastikan sumSeated, sumWalkin, dan sumKids dikirim untuk chart donat
       updateDashboardData({
         filledDaysCount,
         sumServed,
@@ -1228,6 +1196,9 @@
         sumNoShow,
         sumLeakage,
         sumLoss,
+        sumSeated,
+        sumWalkin,
+        sumKids,
         divisor
       });
     }
@@ -1239,6 +1210,17 @@
       document.getElementById('cardTotalNoShow').textContent = formatNum(data.sumNoShow);
       document.getElementById('cardTotalLeakage').textContent = formatNum(data.sumLeakage);
       document.getElementById('cardLossExposure').textContent = formatPureNumber(data.sumLoss);
+
+      // Hitung persentase segmen tamu untuk donat
+      const totalPax = ((data.sumSeated || 0) + (data.sumWalkin || 0) + (data.sumKids || 0)) || 1;
+      const pctInh = (((data.sumSeated || 0) / totalPax) * 100).toFixed(0);
+      const pctAdult = (((data.sumWalkin || 0) / totalPax) * 100).toFixed(0);
+      const pctKids = (((data.sumKids || 0) / totalPax) * 100).toFixed(0);
+
+      document.getElementById('pieInhouseVal').textContent = pctInh + '%';
+      document.getElementById('pieAdultVal').textContent = pctAdult + '%';
+      document.getElementById('pieKidsVal').textContent = pctKids + '%';
+
       renderCharts(data);
     }
 
@@ -1343,7 +1325,7 @@
         data: {
           labels: ['In-House Seated', 'Extra Adult', 'Kids Pax'],
           datasets: [{
-            data: [data.sumSeated || 1, data.sumWalkin || 0, data.sumKids || 0],
+            data: [data.sumSeated || 0, data.sumWalkin || 0, data.sumKids || 0],
             backgroundColor: ['#0076b5', '#10b981', '#f59e0b'],
             borderWidth: 0
           }]
@@ -1357,8 +1339,9 @@
               color: '#ffffff',
               font: { family: 'Plus Jakarta Sans', weight: 'bold', size: 10 },
               formatter: (val) => {
-                if (data.sumServed <= 0) return '';
-                const pct = ((val / data.sumServed) * 100).toFixed(0);
+                const total = ((data.sumSeated || 0) + (data.sumWalkin || 0) + (data.sumKids || 0));
+                if (total <= 0) return '';
+                const pct = ((val / total) * 100).toFixed(0);
                 return pct > 5 ? pct + '%' : '';
               }
             }
