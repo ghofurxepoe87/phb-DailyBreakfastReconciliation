@@ -193,9 +193,7 @@
   <!-- MAIN CONTENT CONTAINER -->
   <main class="max-w-[1850px] mx-auto px-3.5 sm:px-6 py-3.5 sm:py-5 flex-1 w-full space-y-4">
 
-    <!-- ========================================================================= -->
-    <!-- TAB 1: DAILY RECONCILIATION TABLE & MOBILE CARD VIEW                     -->
-    <!-- ========================================================================= -->
+    <!-- TAB 1: DAILY RECONCILIATION TABLE & MOBILE CARD VIEW -->
     <div id="tabContent-daily" class="space-y-3.5">
       
       <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-wrap items-center justify-between gap-3">
@@ -259,7 +257,7 @@
               <th class="py-2.5 px-2 border-r border-brand-700 bg-amber-500/40 text-amber-50 font-black" title="Tamu Kamar yang Riil Duduk Makan (Checklist Pintu)">In-House Seated (I)</th>
               <th class="py-2.5 px-2 border-r border-brand-700" title="Tamu Dewasa Beli Tambahan/Walk-in">Extra Pax (J)</th>
               <th class="py-2.5 px-2 border-r border-brand-700" title="Anak-anak Beli Tambahan 50%">Kids (K)</th>
-              <th class="py-2.5 px-2 border-r border-brand-700 bg-brand-800 text-white font-black" title="Total Fisik Piring Keluar = I + J + K">Served (L)</th>
+              <th class="py-2.5 px-2 border-r border-brand-800 text-white font-black" title="Total Fisik Piring Keluar = I + J + K">Served (L)</th>
 
               <th class="py-2.5 px-2 border-r border-brand-700" title="Selisih Tamu Duduk vs Jatah = I - H">Variance (M)</th>
               <th class="py-2.5 px-2 border-r border-brand-700 text-blue-100" title="Tamu Berhak Sarapan yang Tidak Datang">No-Show (N)</th>
@@ -340,9 +338,7 @@
       </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- TAB 2: EXECUTIVE SUMMARY & STRATEGIC DASHBOARD                            -->
-    <!-- ========================================================================= -->
+    <!-- TAB 2: EXECUTIVE SUMMARY & STRATEGIC DASHBOARD -->
     <div id="tabContent-dashboard" class="hidden space-y-4">
       <div class="grid grid-cols-2 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
         <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-sm">
@@ -612,9 +608,11 @@
     </div>
   </div>
 
-  <!-- MODAL 2: PANDUAN KOLOM -->
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: PANDUAN KOLOM LENGKAP 5 KELOMPOK AUDIT                           -->
+  <!-- ========================================================================= -->
   <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
+    <div class="bg-white border-t sm:border border-slate-200 rounded-t-3xl sm:rounded-3xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] pb-[env(safe-area-inset-bottom,0px)]">
       
       <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between shrink-0">
         <div class="flex items-center space-x-2.5">
@@ -622,8 +620,8 @@
             <i class="fa-solid fa-book-bookmark"></i>
           </div>
           <div>
-            <h3 class="text-xs sm:text-sm font-extrabold text-white">Panduan Kolom untuk Waiter &amp; Kasir</h3>
-            <p class="text-[10px] text-amber-100">Buku saku audit sarapan Platinum Hotel</p>
+            <h3 class="text-xs sm:text-sm font-extrabold text-white">Panduan Lengkap Audit &amp; Rekonsiliasi Sarapan</h3>
+            <p class="text-[10px] text-amber-100">Standar Operasional (SOP) Platinum Hotel &amp; Convention Hall</p>
           </div>
         </div>
         <button onclick="closeGuideModal()" class="text-white/80 hover:text-white p-1.5">
@@ -631,54 +629,183 @@
         </button>
       </div>
 
-      <div class="p-4 sm:p-6 overflow-y-auto space-y-3.5 text-xs text-slate-700 leading-relaxed">
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
         
+        <!-- KELOMPOK 1 -->
         <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200">
-          <h4 class="font-extrabold text-brand-800 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-invoice"></i> 1. Kolom Dari Laporan DRR Night Audit (Front Office)
+          <h4 class="font-extrabold text-brand-800 text-xs sm:text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-file-invoice"></i> KELOMPOK 1: DATA DRR D-1 (LAPORAN NIGHT AUDIT SEMALAM)
           </h4>
-          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
-            <li><strong>Occupied Rms (C):</strong> Total kamar terisi malam tadi.</li>
-            <li><strong>RO Rms (D):</strong> Kamar Room Only. <strong>Tidak berhak sarapan gratis</strong>.</li>
-            <li><strong>Comp + HU Rms &amp; Pax:</strong> Kamar complimentary (gratis) &amp; dinas manajemen.</li>
+          <p class="text-[11px] text-slate-500 mb-2 italic">Data disalin langsung dari laporan Daily Room Report (DRR) penutupan malam sebelumnya (D-1):</p>
+          <ul class="space-y-2 text-slate-700 text-[11px] sm:text-xs">
+            <li>
+              <strong class="text-slate-900">1. Occ Rms (C) – Occupied Rooms:</strong>
+              <div class="pl-2 border-l-2 border-brand-400 mt-0.5">
+                Total seluruh kamar hotel yang terisi dan ada tamunya malam tadi. Mencakup semua kamar berbayar (<em>paid rooms</em>), kamar Room Only (RO), kamar Complimentary (OC/Comp), dan kamar House Use (HU). Angka ini mengunci total kapasitas kamar aktif.
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">2. RO Rms (D) – Room Only Rooms:</strong>
+              <div class="pl-2 border-l-2 border-brand-400 mt-0.5">
+                Jumlah kamar yang dipesan dengan tarif kamar saja tanpa paket sarapan. Tamu dari kamar ini <strong>tidak berhak</strong> mendapatkan sarapan gratis. Jika datang ke restoran, greeter wajib mengarahkan mereka untuk membeli tiket sarapan di kasir POS.
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">3. Comp + HU Rms – Complimentary &amp; House Use Rooms:</strong>
+              <div class="pl-2 border-l-2 border-brand-400 mt-0.5">
+                Jumlah kamar yang diberikan cuma-cuma (<em>Complimentary / Officer Check</em>) serta kamar dinas internal manajemen/karyawan (<em>House Use</em>).
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">4. Comp + HU Pax – Complimentary &amp; House Use Pax:</strong>
+              <div class="pl-2 border-l-2 border-brand-400 mt-0.5">
+                Jumlah fisik orang/tamu yang menginap di dalam kamar Comp dan House Use tersebut.
+              </div>
+            </li>
             <li class="bg-amber-100/70 p-2 rounded-lg border border-amber-300 text-amber-950 font-medium">
-              <strong class="text-amber-900">★ In-House Guests (E):</strong> 
-              <strong>SEMUA tamu</strong> yang tidur di kamar hotel (Kamar Paket + Room Only + Comp/HU).
+              <strong class="text-amber-900">★ 5. In-House Guests (E) – Total Physical Guests:</strong>
+              <div class="pl-2 border-l-2 border-amber-400 mt-0.5">
+                Total keseluruhan orang (jiwa) yang tidur di dalam hotel malam semalam. Menggabungkan seluruh tamu di kamar paket sarapan, kamar RO, dan kamar Comp/HU untuk mencerminkan kepadatan tamu hotel secara aktual.
+              </div>
             </li>
           </ul>
         </div>
 
+        <!-- KELOMPOK 2 -->
         <div class="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200">
-          <h4 class="font-extrabold text-indigo-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-id-card-clip"></i> 2. Jatah Kuota Sah (PMS Entitlement)
+          <h4 class="font-extrabold text-indigo-900 text-xs sm:text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-id-card-clip"></i> KELOMPOK 2: KUOTA RESMI SISTEM (PMS ENTITLEMENT)
           </h4>
-          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
-            <li><strong>PMS Incl (F):</strong> Tamu kamar berbayar yang beli paket include sarapan (2 orang/kamar).</li>
-            <li><strong>Comp &amp; VIP (G):</strong> Tamu complimentary / voucher sarapan resmi bertanda tangan GM.</li>
-            <li><strong>Entitled (H) = F + G:</strong> Batas maksimal tamu yang boleh makan tanpa tagihan tambahan.</li>
+          <p class="text-[11px] text-slate-500 mb-2 italic">Menghitung batas resmi berapa banyak porsi sarapan yang sah dinikmati tanpa penagihan kasir:</p>
+          <ul class="space-y-2 text-slate-700 text-[11px] sm:text-xs">
+            <li>
+              <strong class="text-slate-900">1. PMS Incl (F) – PMS Rate Inclusive Pax:</strong>
+              <div class="pl-2 border-l-2 border-indigo-400 mt-0.5">
+                Jumlah pax dari kamar berbayar yang paket harganya sudah mencakup sarapan (<em>breakfast included</em>).
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">2. Comp/VIP (G) – Complimentary &amp; VIP Entitled Pax:</strong>
+              <div class="pl-2 border-l-2 border-indigo-400 mt-0.5">
+                Jumlah porsi sarapan gratis yang disetujui secara resmi, baik dari jatah kamar Comp maupun voucher khusus bertanda tangan General Manager (GM).
+              </div>
+            </li>
+            <li>
+              <strong class="text-indigo-950 font-bold">3. Entitled (H) – Total Authorized Entitlement:</strong>
+              <div class="pl-2 border-l-2 border-indigo-500 mt-0.5">
+                <span class="font-mono font-bold text-indigo-700 bg-white px-1.5 py-0.5 rounded border border-indigo-200">Rumus: Entitled (H) = PMS Incl (F) + Comp/VIP (G)</span><br>
+                Batas maksimal jumlah orang yang berhak masuk dan makan di restoran dengan fasilitas kamar/voucher resmi.
+              </div>
+            </li>
           </ul>
         </div>
 
+        <!-- KELOMPOK 3 -->
         <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200">
-          <h4 class="font-extrabold text-amber-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-door-open"></i> 3. Angka Riil Resto &amp; Kasir
+          <h4 class="font-extrabold text-amber-900 text-xs sm:text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-door-open"></i> KELOMPOK 3: REALISASI RESTORAN (PHYSICAL TURNOUT)
           </h4>
-          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
-            <li><strong>In-House Seated (I):</strong> Tamu kamar paket yang <strong>riil duduk makan</strong> (dicentang di pintu oleh greeter).</li>
-            <li><strong>Extra Adult (J) &amp; Kids (K):</strong> Tamu yang <strong>sudah bayar tiket sarapan di kasir POS</strong>.</li>
-            <li><strong>Served (L) = I + J + K:</strong> Total seluruh piring yang keluar pagi ini.</li>
+          <p class="text-[11px] text-slate-500 mb-2 italic">Data fisik piring dan orang yang riil masuk ke restoran pagi ini:</p>
+          <ul class="space-y-2 text-slate-700 text-[11px] sm:text-xs">
+            <li>
+              <strong class="text-slate-900">1. In-House Seated (I) – Actual In-House Diners Seated:</strong>
+              <div class="pl-2 border-l-2 border-amber-400 mt-0.5">
+                Jumlah tamu kamar paket dan tamu Comp/VIP/OC/ENT yang riil datang dan duduk makan di restoran. Diambil langsung dari lembar checklist greeter/hostess di pintu masuk restoran.
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">2. Extra Pax (J) – Paid Extra / Walk-in Adults:</strong>
+              <div class="pl-2 border-l-2 border-amber-400 mt-0.5">
+                Jumlah tamu dewasa yang membayar tiket sarapan langsung di kasir POS restoran (misal: tamu RO yang membeli sarapan atau tamu dari luar).
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">3. Kids (K) – Paid Children Pax:</strong>
+              <div class="pl-2 border-l-2 border-amber-400 mt-0.5">
+                Jumlah anak-anak yang membayar tiket sarapan tambahan di kasir POS (sesuai tarif anak/50%).
+              </div>
+            </li>
+            <li>
+              <strong class="text-amber-950 font-bold">4. Served (L) – Total Covers Served:</strong>
+              <div class="pl-2 border-l-2 border-amber-500 mt-0.5">
+                <span class="font-mono font-bold text-amber-800 bg-white px-1.5 py-0.5 rounded border border-amber-200">Rumus: Served (L) = In-House Seated (I) + Extra Pax (J) + Kids (K)</span><br>
+                Total seluruh fisik piring/tamu yang mengonsumsi sarapan di restoran pada pagi tersebut.
+              </div>
+            </li>
           </ul>
         </div>
 
+        <!-- KELOMPOK 4 -->
         <div class="p-3.5 rounded-2xl bg-rose-50/70 border border-rose-200">
-          <h4 class="font-extrabold text-rose-900 text-xs sm:text-sm mb-1.5 flex items-center gap-1.5">
-            <i class="fa-solid fa-triangle-exclamation"></i> 4. Kebocoran (Leakage) &amp; Alokasi
+          <h4 class="font-extrabold text-rose-900 text-xs sm:text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> KELOMPOK 4: VARIANCE &amp; KONTROL AUDIT KEBOCORAN
           </h4>
-          <ul class="space-y-1.5 text-slate-700 text-[11px] sm:text-xs">
-            <li><strong>Leakage / Over-Pax (O):</strong> Tamu duduk (I) melebihi jatah sah kuota (H). Terjadi jika tamu RO atau tamu tambahan masuk tanpa dicek tiketnya.</li>
-            <li><strong>Breakfast Allocation:</strong> Nilai alokasi sarapan kamar per pax.</li>
-            <li class="bg-rose-100 p-2 rounded-lg border border-rose-300 text-rose-950 font-bold">
-              Rumus Potensi Kerugian = Leakage (O) × Breakfast Allocation (Rp).
+          <p class="text-[11px] text-slate-500 mb-2 italic">Uji silang untuk mendeteksi apakah ada tamu tanpa jatah yang masuk makan:</p>
+          <ul class="space-y-2 text-slate-700 text-[11px] sm:text-xs">
+            <li>
+              <strong class="text-slate-900">1. Variance (M) – In-House Variance:</strong>
+              <div class="pl-2 border-l-2 border-rose-400 mt-0.5">
+                <span class="font-mono font-bold text-slate-800 bg-white px-1.5 py-0.5 rounded border border-rose-200">Rumus: Variance (M) = In-House Seated (I) - Entitled (H)</span><br>
+                Selisih antara tamu kamar yang duduk makan dibandingkan dengan kuota sah kamar. Nilai negatif (-) berarti ada tamu yang tidak sarapan (No-Show). Nilai positif (+) menandakan kelebihan tamu masuk (Leakage).
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">2. No-Show (N) – Entitled Guests Skipped Breakfast:</strong>
+              <div class="pl-2 border-l-2 border-rose-400 mt-0.5">
+                <span class="font-mono font-bold text-slate-800 bg-white px-1.5 py-0.5 rounded border border-rose-200">Rumus: Jika Entitled (H) &gt; Seated (I), No-Show = H - I. Selain itu = 0</span><br>
+                Jumlah porsi tamu yang punya jatah sarapan resmi tetapi tidak datang makan.
+              </div>
+            </li>
+            <li class="bg-rose-100 p-2.5 rounded-xl border border-rose-300">
+              <strong class="text-rose-950 font-bold">3. Leakage (O) – Unbilled Over-Pax (Kebocoran):</strong>
+              <div class="pl-2 border-l-2 border-rose-500 mt-0.5">
+                <span class="font-mono font-black text-rose-700 bg-white px-1.5 py-0.5 rounded border border-rose-300">Rumus: Jika Seated (I) &gt; Entitled (H), Leakage = I - H. Selain itu = 0</span><br>
+                <strong>Indikator kebocoran pendapatan.</strong> Terjadi jika jumlah tamu kamar yang makan melebihi kuota sah. Penyebab umumnya adalah tamu Room Only yang masuk tanpa dicek kuotanya atau kamar 2 pax membawa 3-4 pax tanpa bayar tiket tambahan.
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">4. Turnout (P) – Turnout Ratio %:</strong>
+              <div class="pl-2 border-l-2 border-rose-400 mt-0.5">
+                <span class="font-mono font-bold text-slate-800 bg-white px-1.5 py-0.5 rounded border border-rose-200">Rumus: Turnout (P) = (In-House Seated (I) / Entitled (H)) × 100%</span><br>
+                Persentase tingkat kehadiran tamu kamar. Rata-rata normal hotel berkisar antara 88% – 94%. Dipakai Executive Chef untuk memprediksi porsi masak agar tidak terjadi pemborosan makanan (<em>food waste</em>).
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- KELOMPOK 5 -->
+        <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+          <h4 class="font-extrabold text-emerald-900 text-xs sm:text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-calculator"></i> KELOMPOK 5: KEUANGAN &amp; KONTROL BIAYA (FINANCIAL &amp; COST CONTROL)
+          </h4>
+          <p class="text-[11px] text-slate-500 mb-2 italic">Mengonversi hasil rekonsiliasi fisik ke dalam nilai rupiah:</p>
+          <ul class="space-y-2 text-slate-700 text-[11px] sm:text-xs">
+            <li>
+              <strong class="text-slate-900">1. Breakfast Allocation (Rp) – Room Rate Allocation:</strong>
+              <div class="pl-2 border-l-2 border-emerald-400 mt-0.5">
+                Nilai rupiah alokasi harga sarapan per orang yang dipotong dari tarif kamar (misalnya Rp100.000/pax). Kolom ini bersifat <em>editable</em> per baris tanggal.
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">2. Walk-in Rev (Q) – Direct Cashier Revenue:</strong>
+              <div class="pl-2 border-l-2 border-emerald-400 mt-0.5">
+                <span class="font-mono font-bold text-emerald-800 bg-white px-1.5 py-0.5 rounded border border-emerald-200">Rumus: Walk-in Rev = (Extra Pax (J) × Tarif Dewasa) + (Kids (K) × Tarif Anak)</span><br>
+                Total uang tunai/kartu yang riil diterima kasir POS restoran dari penjualan sarapan tambahan.
+              </div>
+            </li>
+            <li class="bg-rose-100/90 p-2.5 rounded-xl border border-rose-300">
+              <strong class="text-rose-950 font-bold">3. Leak Loss (R) – Potential Revenue Loss Exposure:</strong>
+              <div class="pl-2 border-l-2 border-rose-500 mt-0.5">
+                <span class="font-mono font-black text-rose-700 bg-white px-1.5 py-0.5 rounded border border-rose-300">Rumus: Leak Loss (R) = Leakage (O) × Breakfast Allocation (Rp)</span><br>
+                Nilai estimasi kerugian finansial akibat tamu yang makan tanpa jatah/tanpa bayar. Duty Manager (DM) / Front Office harus segera menagihkannya ke rekening kamar tamu (<em>guest folio</em>) sebelum check-out!
+              </div>
+            </li>
+            <li>
+              <strong class="text-slate-900">4. Food Cost (S) – Estimated Food Production Cost:</strong>
+              <div class="pl-2 border-l-2 border-emerald-400 mt-0.5">
+                <span class="font-mono font-bold text-emerald-800 bg-white px-1.5 py-0.5 rounded border border-emerald-200">Rumus: Food Cost (S) = Served (L) × Standar Cost per Pax</span><br>
+                Estimasi total biaya bahan baku makanan yang dikeluarkan dapur untuk melayani seluruh piring yang keluar pagi tersebut.
+              </div>
             </li>
           </ul>
         </div>
@@ -687,7 +814,7 @@
 
       <div class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
         <button onclick="closeGuideModal()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 text-white font-extrabold text-xs transition active:scale-95 text-center">
-          Tutup Panduan
+          Saya Mengerti (Tutup Panduan)
         </button>
       </div>
 
@@ -1187,7 +1314,6 @@
       document.getElementById('avgLoss').textContent = formatPureNumber(sumLoss / divisor);
       document.getElementById('avgCost').textContent = formatPureNumber(sumCost / divisor);
 
-      // Pastikan sumSeated, sumWalkin, dan sumKids dikirim untuk chart donat
       updateDashboardData({
         filledDaysCount,
         sumServed,
@@ -1211,7 +1337,6 @@
       document.getElementById('cardTotalLeakage').textContent = formatNum(data.sumLeakage);
       document.getElementById('cardLossExposure').textContent = formatPureNumber(data.sumLoss);
 
-      // Hitung persentase segmen tamu untuk donat
       const totalPax = ((data.sumSeated || 0) + (data.sumWalkin || 0) + (data.sumKids || 0)) || 1;
       const pctInh = (((data.sumSeated || 0) / totalPax) * 100).toFixed(0);
       const pctAdult = (((data.sumWalkin || 0) / totalPax) * 100).toFixed(0);
@@ -1443,10 +1568,10 @@
 
       const badge = document.getElementById('previewAlertBadge');
       if (leakage > 0) {
-        badge.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[9.5px] font-black bg-rose-100 text-rose-700 border border-rose-300 animate-pulse';
         badge.textContent = `ALERT: Leakage ${leakage} Pax!`;
       } else {
-        badge.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
+        badge.className = 'px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300';
         badge.textContent = 'Status Normal';
       }
     }
